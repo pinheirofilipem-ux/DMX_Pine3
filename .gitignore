@@ -1,0 +1,11 @@
+node_modules
+dist/
+distlinux/
+release/
+stage-*/
+test-out/
+out*/
+*.dmg
+*.zip
+hfs.img
+.DS_Store

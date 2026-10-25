@@ -1,0 +1,24 @@
+DMX_Pine3 — instalação (macOS 12 ou mais recente)
+
+1) Faz duplo clique em «Instalar DMX_Pine3.command».
+   Se o macOS disser que não pode abrir o ficheiro: clique direito → Abrir → Abrir.
+   (Em alternativa, abre o Terminal e cola:
+    ditto "/Volumes/DMX_Pine3/DMX_Pine3.app" /Applications/DMX_Pine3.app && xattr -cr /Applications/DMX_Pine3.app && codesign --force --deep -s - /Applications/DMX_Pine3.app && open /Applications/DMX_Pine3.app )
+
+   Arrastar a app para «Applications» também funciona, mas sem o passo acima o
+   macOS diz que a app está danificada — porque não está assinada pela Apple.
+
+2) No primeiro arranque aceita:
+   • Microfone — para entradas de áudio (BlackHole, placa de som, interface).
+   • Gravação de ecrã e áudio do sistema — para «Capturar áudio do computador»
+     (ouve diretamente o Ableton; macOS 14.2 ou mais recente).
+   Se recusares por engano: Definições do Sistema → Privacidade e Segurança →
+   Microfone / Gravação de ecrã e áudio do sistema → liga o DMX_Pine3 e reabre a app.
+
+3) Ao vivo:
+   • A app lembra-se da última fonte de áudio e liga-a sozinha ao abrir.
+   • Não deixa o Mac adormecer e não abranda quando está atrás do Ableton.
+   • Cmd+Q pede confirmação; o menu Ver não tem Cmd+R (recarregar corta o som).
+   • ? mostra os atalhos de teclado.
+
+Qual DMG? Mac com chip Apple (M1–M4) → arm64. Mac com Intel → x64.

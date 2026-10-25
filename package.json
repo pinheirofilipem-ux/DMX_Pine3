@@ -1,0 +1,18 @@
+{
+  "name": "dmx-pine3-build",
+  "private": true,
+  "description": "Ferramentas de build do DMX_Pine3 (a app propriamente dita está em app/)",
+  "scripts": {
+    "start": "electron app",
+    "test": "bash scripts/test.sh",
+    "pack": "node pack.js",
+    "dmg": "bash scripts/make-dmg.sh",
+    "update-zip": "bash scripts/make-update-zip.sh",
+    "icon": "python3 make_icon.py build/DMX_Pine3.png build/DMX_Pine3.icns"
+  },
+  "devDependencies": {
+    "@electron/packager": "^20.3.0",
+    "electron": "^45.0.0",
+    "three": "^0.128.0"
+  }
+}
