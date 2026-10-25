@@ -1,0 +1,56 @@
+# Gera os DMG (arm64 e x64) e publica-os num release do GitHub.
+# Corre ao enviar uma tag vX.Y.Z (tem de coincidir com app/package.json) ou à mão (Actions → Release → Run workflow).
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  dmg:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Versão
+        id: ver
+        run: |
+          VER=$(node -p "require('./app/package.json').version")
+          echo "ver=$VER" >> "$GITHUB_OUTPUT"
+          if [ "${GITHUB_REF_TYPE}" = tag ] && [ "${GITHUB_REF_NAME}" != "v$VER" ]; then
+            echo "::error::A tag ${GITHUB_REF_NAME} não coincide com app/package.json (v$VER)"; exit 1
+          fi
+
+      - name: Ferramentas do DMG
+        run: sudo apt-get update && sudo apt-get install -y xorriso hfsprogs
+
+      - run: npm ci
+      - run: npm run pack
+      - run: npm run dmg
+
+      - name: Publicar release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.ver.outputs.ver }}
+          name: DMX_Pine3 ${{ steps.ver.outputs.ver }}
+          target_commitish: ${{ github.sha }}
+          body: |
+            DMX_Pine3 ${{ steps.ver.outputs.ver }} para macOS.
+
+            - **Apple Silicon (M1/M2/M3/M4):** `DMX_Pine3-${{ steps.ver.outputs.ver }}-arm64.dmg`
+            - **Intel:** `DMX_Pine3-${{ steps.ver.outputs.ver }}-x64.dmg`
+
+            Instalação: abrir o DMG e correr **Instalar DMX_Pine3.command** com clique direito → Abrir
+            (a app não tem assinatura Apple; o script copia-a para /Applications e assina-a ad-hoc).
+            A captura do áudio do sistema precisa de macOS 14.2 ou mais recente.
+          files: release/*.dmg
+          fail_on_unmatched_files: true
