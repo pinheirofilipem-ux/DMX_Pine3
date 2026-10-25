@@ -118,6 +118,7 @@ npm run pack                     # → dist/DMX_Pine3-darwin-{arm64,x64}/DMX_Pin
 npm run dmg                      # → release/DMX_Pine3-<versão>-{arm64,x64}.dmg
 npm run update-zip               # → release/DMX_Pine3-update-<versão>.zip
 ```
+- **Release no GitHub:** `.github/workflows/release.yml` gera os dois DMG e publica-os ao enviar uma tag `vX.Y.Z` (igual à versão de `app/package.json`), ou à mão em Actions → Release.
 - **Versão:** está em `app/package.json` e deve subir a cada entrega (o `pack.js` lê-a daí).
 - **Sem asar** (desde 1.7.0): o código fica em `Contents/Resources/app/`, por isso uma app instalada atualiza-se trocando o `index.html` e voltando a assinar (ver `docs/ATUALIZAR.md`). Atenção: se existir `app.asar`, o Electron ignora a pasta `app/`.
 - **DMG** (`scripts/make-dmg.sh`): criado com `xorriso` (imagem híbrida ISO/HFS+), seguido de uma correção do volume HFS+ com `fsck.hfsplus` (`apt install xorriso hfsprogs`). Para cada arquitetura:
