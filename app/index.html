@@ -529,6 +529,17 @@ body.layout-edit #bar .card.dragging{opacity:.35}
 body.layout-edit .dropNew{display:block}
 .splitV.alvo,.dropNew.alvo{background:rgba(61,240,255,.25);box-shadow:inset 0 0 0 2px #3df0ff}
 #lyAuto.on{--led:#3df0ff}
+/* animação dos painéis */
+.pjModes{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:4px 0 6px}
+.pjModes button{min-height:30px}
+:is(#panel,.dockzone) [data-pjm].on{--co:#ffd23a}
+.pjGrp label{margin:0;font-size:11px}
+.pjCols label{margin:0}
+.amMode{grid-template-columns:repeat(5,1fr)} .amTgt{grid-template-columns:1fr 1fr 1fr 30px 30px}
+.amMode [data-pjm]{--led:#ffd23a} #amUni,#amFade{--led:#3df0ff} .amTgt [data-pjt]{--led:#fff4c2}
+#amPre{--led:#ffb347} #amFoc{--led:#fff4c2}
+.amTgt input[type=color]{-webkit-appearance:none;width:30px;height:26px;padding:2px;border:1px solid #000;border-radius:5px;background:#111;box-shadow:inset 0 1px 3px #000;cursor:pointer}
+.pl-anim .ppRow button{font-size:8.5px!important}
 /* faders: as faixas esticam ou encolhem com a coluna */
 .fRow .strip{flex:1 1 0;width:auto;min-width:38px;max-width:78px}
 .fRow .cap{width:min(40px,74%)}
@@ -758,11 +769,35 @@ body.nohud .dHandle{display:none}
     <label>Força <input type="range" id="pjGlowI" min="0" max="120" value="22" step="5"><span id="pjGlowV" class="mut" style="width:34px;text-align:right">2.2</span></label>
     <div class="row"><select id="pjCol"><option value="auto">Cor automática</option><option value="white">Branco</option><option value="fix">Cor escolhida</option><option value="www" selected>Justice WWW · azul / violeta / rosa</option></select><input type="color" id="pjFix" value="#ff3df2" style="flex:0 0 46px;height:32px"></div>
     <label>Preto ↔ Branco <input type="range" id="pjTone" min="-100" max="100" value="0" title="Vale também para a cor automática"><span class="sw" id="pjToneSw"></span><span id="pjToneV" class="mut" style="width:70px;text-align:right">mesma cor</span></label>
-    <div class="cz sm">Vídeo</div>
-    <div class="row"><select id="pjMode"><option value="foco">Modo FOCO · luz + padrões</option><option value="ecra">Modo ECRÃ · animação nas ripas</option><option value="unido">Modo ECRÃ unido · imagem repartida</option></select></div>
-    <label><input type="checkbox" id="pjVid"> Projetar vídeo nos painéis</label>
-    <label><input type="checkbox" id="pjAll"> Imagem única — ecrãs + painéis juntos</label>
-    <select id="pjSrc"></select>
+    <div class="cz sm">Animação</div>
+    <div class="pjModes"><button data-pjm="foco" title="Lâmpadas e feixes fortes apontados a um alvo">FOCO</button><button data-pjm="ecra" title="Animação nas ripas e feixe fraco na cor do que mostram">ECRÃ</button><button data-pjm="misto" title="Cada grupo (A, B, M) com o seu modo">MISTO</button></div>
+    <div class="row pjGrp" id="pjGrpRow"><label>A <select id="pjGA" title="A — arco de cima (4 painéis)"></select></label><label>B <select id="pjGB" title="B — arco de baixo (4 painéis)"></select></label><label>M <select id="pjGM" title="M — linha atrás da dupla (5 painéis)"></select></label></div>
+    <label><input type="checkbox" id="pjAll"> Unido — uma imagem repartida pelos 13 painéis</label>
+    <label>Transição <select id="pjTrans"><option value="fade">Fade ao preto</option><option value="mix">Mistura direta</option></select></label>
+    <div class="cz sm">Ecrã · animações</div>
+    <div class="chips" id="pjPreChips"></div>
+    <select id="pjSrc" title="O que as ripas mostram em modo ECRÃ"></select>
+    <div class="cz sm">Foco · padrões</div>
+    <div class="chips" id="pjFocChips"></div>
+    <label>Alvo <select id="pjTgt"><option value="centro">Centro do palco</option><option value="djs">DJs</option><option value="cruz">Cruz da parede</option></select></label>
+    <div class="cz sm">Cores e ritmo</div>
+    <div class="row pjCols"><label>Cor 1 <input type="color" id="pjC1"></label><label>Cor 2 <input type="color" id="pjC2"></label></div>
+    <label>Velocidade <input type="range" id="pjSpd" min="10" max="300" step="5" value="100"><span id="pjSpdV" class="mut" style="width:40px;text-align:right">100%</span></label>
+    <label>Reação ao áudio <input type="range" id="pjReact" min="0" max="100" value="60"><span id="pjReactV" class="mut" style="width:40px;text-align:right">60%</span></label>
+    <div hidden><input type="checkbox" id="pjVid"></div>
+  </details>
+
+  <!-- ---------- ELIDY ---------- -->
+  <details class="banco" data-g="elidy"><summary>Elidy</summary>
+    <label><input type="checkbox" id="elOn" checked> A parede Elidy usa estes presets (desligado: mostra o mesmo que os ecrãs)</label>
+    <div class="chips" id="elPreChips"></div>
+    <select id="elSrc"><option value="preset">Fonte: presets Elidy</option></select>
+    <div class="row pjCols"><label>Cor 1 <input type="color" id="elC1"></label><label>Cor 2 <input type="color" id="elC2"></label></div>
+    <label>Velocidade <input type="range" id="elSpd" min="10" max="300" step="5" value="100"><span id="elSpdV" class="mut" style="width:40px;text-align:right">100%</span></label>
+    <label>Intensidade <input type="range" id="elInt" min="0" max="150" value="100"><span id="elIntV" class="mut" style="width:40px;text-align:right">100%</span></label>
+    <label>Reação ao áudio <input type="range" id="elReact" min="0" max="100" value="60"><span id="elReactV" class="mut" style="width:40px;text-align:right">60%</span></label>
+    <label>Texto <input type="text" id="elTxt" maxlength="40" value="JUSTICE"></label>
+    <div class="chips"><button class="chip" data-eltxt="JUSTICE">JUSTICE</button><button class="chip" data-eltxt="WOMAN WORLDWIDE">WOMAN WORLDWIDE</button></div>
   </details>
 
   <!-- ---------- CÂMERA ---------- -->
@@ -900,6 +935,25 @@ body.nohud .dHandle{display:none}
       <select id="pnSrc" title="Fonte do vídeo nos painéis"></select>
     </div>
   </div>
+  <!-- ANIMAÇÃO DOS PAINÉIS -->
+  <div class="plate pl-anim">
+    <div class="plTitle">ANIMAÇÃO <small>PAINÉIS</small></div>
+    <div class="pnRow amMode">
+      <button data-pjm="foco" title="Lâmpadas e feixes fortes apontados a um alvo">FOCO</button>
+      <button data-pjm="ecra" title="Animação nas ripas e feixe fraco na cor do que mostram">ECRÃ</button>
+      <button data-pjm="misto" title="Cada grupo (A, B, M) com o seu modo">MISTO</button>
+      <button id="amUni" data-pv="txt" title="Unido — uma imagem repartida pelos 13 painéis">UNIDO</button>
+      <button id="amFade" data-pv="txt" title="Ligado: fade ao preto entre modos (como no vídeo). Desligado: mistura direta">FADE</button>
+    </div>
+    <div class="plTitle sub">ECRÃ</div>
+    <div class="ppRow" id="amPre"></div>
+    <div class="plTitle sub">FOCO</div>
+    <div class="ppRow" id="amFoc"></div>
+    <div class="pnRow amTgt">
+      <button data-pjt="centro" title="Alvo: centro do palco">CENTRO</button><button data-pjt="djs" title="Alvo: os DJs (esquerda e direita)">DJS</button><button data-pjt="cruz" title="Alvo: a cruz da parede Elidy">CRUZ</button>
+      <input type="color" id="amC1" title="Cor 1 da animação"><input type="color" id="amC2" title="Cor 2 da animação">
+    </div>
+  </div>
   <!-- FADERS -->
   <div class="plate pl-faders">
     <div class="bankCtl">
@@ -1028,6 +1082,53 @@ window.DMX_I18N=[
 ['Off','Off','Off'],
 ['Tecto plano por cima dos DJs e laterais inclinadas até perto do chão do palco','Flat ceiling above the DJs and side walls tilting down almost to the stage floor','Plafond plat au-dessus des DJs et côtés inclinés presque jusqu’au sol de la scène'],
 ['Recolhe os painéis para cima, quase escondidos, e apaga-os','Raises the panels almost out of sight and switches them off','Remonte les panneaux presque hors de vue et les éteint'],
+['Animação','Animation','Animation'],['ANIMAÇÃO','ANIMATION','ANIMATION'],['FOCO','FOCUS','FOCUS'],['ECRÃ','SCREEN','ÉCRAN'],['MISTO','MIXED','MIXTE'],['UNIDO','UNIFIED','UNIFIÉ'],['FADE','FADE','FONDU'],
+['CENTRO','CENTRE','CENTRE'],['DJS','DJS','DJS'],['CRUZ','CROSS','CROIX'],
+['Lâmpadas e feixes fortes apontados a um alvo','Lamps and strong beams aimed at a target','Lampes et faisceaux forts pointés vers une cible'],
+['Animação nas ripas e feixe fraco na cor do que mostram','Animation on the slats and a soft beam in the colour they show','Animation sur les lamelles et faisceau doux de la couleur affichée'],
+['Cada grupo (A, B, M) com o seu modo','Each group (A, B, M) with its own mode','Chaque groupe (A, B, M) avec son mode'],
+['A — arco de cima (4 painéis)','A — upper arc (4 panels)','A — arc du haut (4 panneaux)'],['B — arco de baixo (4 painéis)','B — lower arc (4 panels)','B — arc du bas (4 panneaux)'],
+['M — linha atrás da dupla (5 painéis)','M — row behind the duo (5 panels)','M — ligne derrière le duo (5 panneaux)'],
+['Unido — uma imagem repartida pelos 13 painéis','Unified — one image split across the 13 panels','Unifié — une image répartie sur les 13 panneaux'],
+['Transição','Transition','Transition'],['Fade ao preto','Fade to black','Fondu au noir'],['Mistura direta','Direct mix','Mélange direct'],
+['Ecrã · animações','Screen · animations','Écran · animations'],['Foco · padrões','Focus · patterns','Focus · motifs'],
+['O que as ripas mostram em modo ECRÃ','What the slats show in SCREEN mode','Ce que montrent les lamelles en mode ÉCRAN'],
+['Animação dos painéis (presets)','Panel animation (presets)','Animation des panneaux (presets)'],
+['Alvo','Target','Cible'],['Centro do palco','Stage centre','Centre de la scène'],['DJs','DJs','DJs'],['Cruz da parede','Wall cross','Croix du mur'],
+['Cores e ritmo','Colours and pace','Couleurs et rythme'],['Cor 1','Colour 1','Couleur 1'],['Cor 2','Colour 2','Couleur 2'],['Velocidade','Speed','Vitesse'],['Reação ao áudio','Audio reaction','Réaction au son'],
+['Ligado: fade ao preto entre modos (como no vídeo). Desligado: mistura direta','On: fade to black between modes (as in the video). Off: direct mix','Activé : fondu au noir entre modes (comme dans la vidéo). Désactivé : mélange direct'],
+['Alvo: centro do palco','Target: stage centre','Cible : centre de la scène'],['Alvo: os DJs (esquerda e direita)','Target: the DJs (left and right)','Cible : les DJs (gauche et droite)'],
+['Alvo: a cruz da parede Elidy','Target: the Elidy wall cross','Cible : la croix du mur Elidy'],['Cor 1 da animação','Animation colour 1','Couleur 1 de l’animation'],['Cor 2 da animação','Animation colour 2','Couleur 2 de l’animation'],
+['Elidy','Elidy','Elidy'],['Parede Elidy','Elidy wall','Mur Elidy'],['Feixes dos painéis (foco)','Panel beams (focus)','Faisceaux des panneaux (focus)'],['Foco','Focus','Focus'],['Ecrã','Screen','Écran'],
+['A parede Elidy usa estes presets (desligado: mostra o mesmo que os ecrãs)','The Elidy wall uses these presets (off: shows the same as the screens)','Le mur Elidy utilise ces presets (désactivé : affiche la même chose que les écrans)'],
+['Fonte: presets Elidy','Source: Elidy presets','Source : presets Elidy'],['Texto','Text','Texte'],
+['Animação dos painéis','Panel animation','Animation des panneaux'],['Painéis · ecrã','Panels · screen','Panneaux · écran'],['ecrã','screen','écran'],['foco','focus','focus'],['Painéis · foco','Panels · focus','Panneaux · focus'],['unido','unified','unifié'],
+['Modo FOCO','FOCUS mode','Mode FOCUS'],['Modo ECRÃ','SCREEN mode','Mode ÉCRAN'],['Modo MISTO','MIXED mode','Mode MIXTE'],
+['Faíscas','Sparks','Étincelles'],['Faíscas douradas a cintilar nas ripas, mais densas com a música','Golden sparks glittering on the slats, denser with the music','Étincelles dorées qui scintillent sur les lamelles, plus denses avec la musique'],
+['Chuva vertical','Vertical rain','Pluie verticale'],['Riscos de luz a cair pelas ripas','Streaks of light falling down the slats','Traits de lumière qui tombent le long des lamelles'],
+['EQ por painel','EQ per panel','EQ par panneau'],['Cada painel é uma banda do áudio: as ripas sobem e descem','Each panel is an audio band: the slats rise and fall','Chaque panneau est une bande audio : les lamelles montent et descendent'],
+['Varrimento','Sweep','Balayage'],['Uma barra de luz atravessa os painéis','A bar of light crosses the panels','Une barre de lumière traverse les panneaux'],
+['Cascata A→B→M','Cascade A→B→M','Cascade A→B→M'],['Acende o arco de cima, depois o de baixo, depois a linha','Lights the upper arc, then the lower one, then the row','Allume l’arc du haut, puis celui du bas, puis la ligne'],
+['Strobe alternado','Alternating strobe','Strobe alterné'],['Painéis ímpares e pares alternam (no kick, com reação ao áudio alta)','Odd and even panels alternate (on the kick, with high audio reaction)','Panneaux pairs et impairs alternent (sur le kick, avec une forte réaction au son)'],
+['Respirar','Breathe','Respiration'],['Luz lenta que sobe e desce','Slow light that rises and falls','Lumière lente qui monte et descend'],
+['Cruz repartida','Split cross','Croix répartie'],['Uma cruz desenhada em todos os painéis juntos','A cross drawn across all the panels together','Une croix dessinée sur tous les panneaux ensemble'],
+['Convergir','Converge','Converger'],['Todos os feixes no alvo (centro, DJs ou cruz)','All beams on the target (centre, DJs or cross)','Tous les faisceaux sur la cible (centre, DJs ou croix)'],
+['Leque em estrela','Star fan','Éventail en étoile'],['Os feixes abrem para fora, sobre o público','The beams open outwards, over the crowd','Les faisceaux s’ouvrent vers l’extérieur, sur le public'],
+['Cruzado','Crossed','Croisé'],['A esquerda aponta para a direita e vice-versa','Left aims right and vice versa','La gauche vise la droite et inversement'],
+['Os feixes varrem a sala de um lado ao outro','The beams sweep the room from side to side','Les faisceaux balaient la salle d’un côté à l’autre'],
+['Dois blocos','Two blocks','Deux blocs'],['Esquerda na cor 1 (âmbar), direita em azul, cada uma para o seu lado','Left in colour 1 (amber), right in blue, each to its own side','Gauche en couleur 1 (ambre), droite en bleu, chacune de son côté'],
+['Chuva de feixes','Beam rain','Pluie de faisceaux'],['Feixes a direito para baixo, a cair um a um','Beams straight down, dropping one by one','Faisceaux droits vers le bas, qui tombent un à un'],
+['Strobe','Strobe','Strobe'],['Feixes no alvo, em strobe','Beams on the target, strobing','Faisceaux sur la cible, en strobe'],['Feixes e lâmpadas apagados','Beams and lamps off','Faisceaux et lampes éteints'],
+['Cruz','Cross','Croix'],['Cruz branca ao centro, pulsa com o kick','White cross in the centre, pulsing with the kick','Croix blanche au centre, qui pulse avec le kick'],
+['Faíscas douradas','Golden sparks','Étincelles dorées'],['Faíscas dos dois lados do centro','Sparks on both sides of the centre','Étincelles des deux côtés du centre'],
+['Cruz + faíscas','Cross + sparks','Croix + étincelles'],['A cruz com faíscas douradas dos lados (como no vídeo)','The cross with golden sparks on both sides (as in the video)','La croix avec des étincelles dorées sur les côtés (comme dans la vidéo)'],
+['Espectro','Spectrum','Spectre'],['Barras do áudio, espelhadas a partir do centro','Audio bars, mirrored from the centre','Barres audio, en miroir depuis le centre'],
+['Pixel Elidy','Elidy pixels','Pixels Elidy'],['Os pixels grandes da parede a cintilar nas duas cores','The wall’s big pixels twinkling in the two colours','Les gros pixels du mur qui scintillent dans les deux couleurs'],
+['Scanner','Scanner','Scanner'],['Barras de luz a varrer na horizontal e na vertical','Light bars sweeping horizontally and vertically','Barres de lumière qui balaient à l’horizontale et à la verticale'],
+['Pulso','Pulse','Pulsation'],['Uma onda radial a cada kick','A radial wave on every kick','Une onde radiale à chaque kick'],
+['Aurora / pôr do sol','Aurora / sunset','Aurore / coucher de soleil'],['Gradiente lento entre as duas cores','Slow gradient between the two colours','Dégradé lent entre les deux couleurs'],
+['Letreiro editável (ex.: JUSTICE, WOMAN WORLDWIDE)','Editable sign (e.g. JUSTICE, WOMAN WORLDWIDE)','Enseigne modifiable (ex. JUSTICE, WOMAN WORLDWIDE)'],
+['Preto / Branco','Black / White','Noir / Blanc'],['Preto, com flash branco no kick (sem reação: alterna)','Black, with a white flash on the kick (no reaction: alternates)','Noir, avec un flash blanc sur le kick (sans réaction : alterne)'],
 ['BRANCO','WHITE','BLANC'],['COR','COLOUR','COULEUR'],['TOM','TONE','TEINTE'],['VÍDEO','VIDEO','VIDÉO'],['IMAGEM ÚNICA','SINGLE IMAGE','IMAGE UNIQUE'],
 ['Cor automática: segue a secção e a música','Automatic colour: follows the section and the music','Couleur automatique : suit la section et la musique'],
 ['Painéis em branco','Panels in white','Panneaux en blanc'],['Cor escolhida (o quadrado ao lado)','Chosen colour (the swatch next to it)','Couleur choisie (le carré à côté)'],
@@ -1543,9 +1644,9 @@ const R=new THREE.WebGLRenderer({canvas:$('gl'),antialias:true,powerPreference:'
    e nao dava para dizer se o palco estava claro demais. Agora tudo o que emite luz
    passa por LV: um nivel por grupo, mais o "mestre" que mexe em tudo de uma vez.
    1 = o nivel de antes. Os valores abaixo de 1 foram calibrados para o palco nao saturar. */
-const LV={mestre:1, exposicao:.72, painel:.62, cruz:.7, ecra:.75, plateia:.6, feixes:.7,
+const LV={mestre:1, exposicao:.72, painel:.62, cruz:.7, foco:.85, elidy:1, ecra:.75, plateia:.6, feixes:.7,
           halo:.65, painelLuz:.5, painelHalo:.6, painelLancador:.7, led:.8, cabeca:.75, poeira:.7};
-const LV_LAB={mestre:'Brilho geral', exposicao:'Exposição da imagem', painel:'Painéis',
+const LV_LAB={mestre:'Brilho geral', exposicao:'Exposição da imagem', painel:'Painéis', foco:'Feixes dos painéis (foco)', elidy:'Parede Elidy',
   cruz:'Cruz Justice', ecra:'Ecrãs', plateia:'Plateia', feixes:'Feixes de luz', halo:'Halo dos feixes',
   painelLuz:'Luz deitada pelos painéis', painelHalo:'Halo dos painéis', painelLancador:'Lançador à frente',
   led:'Barras de LED', cabeca:'Lentes dos moving heads', poeira:'Poeira no ar'};
@@ -1892,7 +1993,7 @@ const ledPanel=(g,s,y,band)=>{ const p=new THREE.Mesh(new THREE.PlaneGeometry(3,
 /* ============================ PALCOS ============================ */
 let ceil=null;
 const slat=(()=>{ const c=document.createElement('canvas'); c.width=c.height=64; const x=c.getContext('2d'); x.fillStyle='#000'; x.fillRect(0,0,64,64); x.fillStyle='#fff'; for(let i=0;i<5;i++) x.fillRect(i*13+3,3,8,58); return new THREE.CanvasTexture(c); })();
-let jFade=0; const tinyC=document.createElement('canvas'); tinyC.width=tinyC.height=4; const tinyX=tinyC.getContext('2d',{willReadFrequently:true});
+const tinyC=document.createElement('canvas'); tinyC.width=tinyC.height=4; const tinyX=tinyC.getContext('2d',{willReadFrequently:true});
 function pjColOf(p,ctx){ try{ tinyX.drawImage(ctx.canvas,0,0,4,4); const d=tinyX.getImageData(0,0,4,4).data; let r=0,g=0,b=0; for(let i=0;i<64;i+=4){ r+=d[i]; g+=d[i+1]; b+=d[i+2]; } p.vcol=p.vcol||new THREE.Color(); p.vcol.setRGB(r/4080,g/4080,b/4080); }catch(e){} }
 const jp=[], jCross=[]; let marshL=null, jVid=false, jJoin=false, jwire=null, jCrossLight=null;
 const sq5=(()=>{ const c=document.createElement('canvas'); c.width=320; c.height=32; const x=c.getContext('2d'); x.fillStyle='#000'; x.fillRect(0,0,320,32); x.fillStyle='#fff'; for(let i=0;i<5;i++) x.fillRect(i*64+12,2,40,28); return new THREE.CanvasTexture(c); })();
@@ -1901,7 +2002,7 @@ const STAGES={
   accor:{name:'Justice WWW',bg:0x000000,fog:[0x06080c,.009],floor:0x07080b,stars:false,beams:true,S:1.5,D:-11,bs:1.1,by:1.8,bz:-25.6,
     plat:{w:36,d:14,z:-27},crowd:{xr:24,z0:-19,z1:30,keep:1},
     hs:{y:22,z:-24,span:15,cy:22,cz:2,cspan:16},
-    scr:[{x:-24.5,y:8.5,z:-24.8,ry:.18,w:4.4,h:9.5,nm:'IMAG esq.'},{x:24.5,y:8.5,z:-24.8,ry:-.18,w:4.4,h:9.5,nm:'IMAG dir.'},{x:-31.5,y:9.5,z:-7.5,ry:.72,w:7,h:9,nm:'lateral esq.'},{x:31.5,y:9.5,z:-7.5,ry:-.72,w:7,h:9,nm:'lateral dir.'},{x:0,y:4.2,z:-33.6,ry:0,w:22,h:7.7,nm:'parede Elidy'}],
+    scr:[{x:-24.5,y:8.5,z:-24.8,ry:.18,w:4.4,h:9.5,nm:'IMAG esq.'},{x:24.5,y:8.5,z:-24.8,ry:-.18,w:4.4,h:9.5,nm:'IMAG dir.'},{x:-31.5,y:9.5,z:-7.5,ry:.72,w:7,h:9,nm:'lateral esq.'},{x:31.5,y:9.5,z:-7.5,ry:-.72,w:7,h:9,nm:'lateral dir.'},{x:0,y:5.3,z:-29.6,ry:0,w:22,h:7.7,nm:'parede Elidy'}],
     build(g){
       const tm=new THREE.MeshLambertMaterial({color:0x151820}), P=[];
       const seat=(x0,x1,z0,z1,y,n)=>{ for(let k=0;k<n;k++) P.push(x0+Math.random()*(x1-x0),y,z0+Math.random()*(z1-z0)); };
@@ -2078,25 +2179,26 @@ function drawJointSlice(ctx,W,H,cx,w,t){
   ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H); ctx.drawImage(jointCanvas,sx,0,ex-sx,jointCanvas.height,0,0,W,H); return true;
 }
 function drawScreens(t){
-  const joined=curStage==='accor'&&$('pjVid').checked&&$('pjAll').checked;
+  const joined=curStage==='accor'&&$('pjVid').checked&&$('pjAll').checked&&$('pjSrc').value!=='pp';
   if(joined){
     let ready=true, Ls=STAGES.accor.scr;
     for(let i=0;i<nScr;i++){ const s=screens[i], L=Ls[i]; if(!drawJointSlice(s.ctx,s.cw,CH,L.x,L.w,t)) ready=false; s.tex.needsUpdate=true; }
-    dirty=!ready; return;
+    dirty=!ready; elidyWall(t); return;
   }
+  elidyWall(t);
   const animated=screens.some(s=>s.src.kind==='preset'||s.src.video);
   if(!animated&&!dirty) return;
   let ready=true;
   if(span){
     ready=drawSrc(mctx,screens[0].src,MW,CH,t); let o=0;
-    for(let i=0;i<nScr;i++){ const s=screens[i]; s.ctx.drawImage(master,o,0,s.cw,CH,0,0,s.cw,CH); o+=s.cw; s.tex.needsUpdate=true; }
+    for(let i=0;i<nScr;i++){ const s=screens[i]; if(!(i===4&&elOn())) s.ctx.drawImage(master,o,0,s.cw,CH,0,0,s.cw,CH); o+=s.cw; s.tex.needsUpdate=true; }
   } else {
     for(let i=0;i<nScr;i++){ const s=screens[i];
       let j=-1; for(let k=0;k<i;k++) if(screens[k].src===s.src){ j=k; break; }
       if(j>=0) s.ctx.drawImage(screens[j].canvas,0,0,s.cw,CH); else if(!drawSrc(s.ctx,s.src,s.cw,CH,t)) ready=false;
       s.tex.needsUpdate=true; }
   }
-  dirty=!ready;
+  dirty=!ready; elidyWall(t);
 }
 let target='span';
 $('target').onchange=e=>target=e.target.value;
@@ -2114,7 +2216,7 @@ function addMedia(f){
   } else if(f.type.startsWith('image/')){
     const im=new Image(); im.src=url; src={kind:'media',el:im,video:false,name:f.name};
   } else return;
-  mediaSrcs.push(src); { const o=document.createElement('option'); o.value='m:'+(mediaSrcs.length-1); o.textContent=(src.video?'🎞 ':'🖼 ')+f.name; $('pjSrc').appendChild(o); }
+  mediaSrcs.push(src); { const o=document.createElement('option'); o.value='m:'+(mediaSrcs.length-1); o.textContent=(src.video?'🎞 ':'🖼 ')+f.name; $('pjSrc').appendChild(o); const o2=o.cloneNode(true); o2.textContent='Elidy: '+o.textContent; $('elSrc').appendChild(o2); }
   const b=document.createElement('button'); b.className='chip'; b.textContent=(src.video?'🎞 ':'🖼 ')+(f.name.length>16?f.name.slice(0,14)+'…':f.name); b.title=f.name;
   b.onclick=()=>{ if(src.video) src.el.play().catch(()=>{}); applySrc(src); };
   $('lib').appendChild(b); b.click();
@@ -2127,7 +2229,7 @@ addEventListener('drop',e=>{ e.preventDefault(); [...e.dataTransfer.files].forEa
 
 /* ============================ SECÇÕES + PAINÉIS JUSTICE ============================ */
 const mediaSrcs=[];
-$('pjSrc').innerHTML='<option value="screens">Vídeo: igual aos ecrãs</option>'+PRESETS.map(([id,n])=>`<option value="p:${id}">Visual: ${n}</option>`).join('');
+$('pjSrc').innerHTML='<option value="pp">Animação dos painéis (presets)</option><option value="screens">Vídeo: igual aos ecrãs</option>'+PRESETS.map(([id,n])=>`<option value="p:${id}">Visual: ${n}</option>`).join('');
 const vpc=document.createElement('canvas'); vpc.width=320; vpc.height=320; const vpx=vpc.getContext('2d',{willReadFrequently:true});
 // Le a luminancia do que esta mesmo projetado no painel, numa fatia pequena do SEU
 // canvas. E o que o lancador tem de seguir: um painel a mostrar preto nao deita luz.
@@ -2169,10 +2271,6 @@ function midiScreenSources(){
 const RECT_PATTERNS=[
   {id:'audio',name:'Áudio · orgânico',desc:'Balanço orgânico que segue a energia da música (com SECÇÃO AUTO ligada, segue também a secção)'},
   {id:'wave',name:'Onda lateral',desc:'Uma onda percorre esquerda → direita'},
-  {id:'converge',name:'Foco · Convergir',desc:'Todos apontam para o centro / DJs'},
-  {id:'starfan',name:'Foco · Leque em estrela',desc:'Feixes abrem para fora'},
-  {id:'crossed',name:'Foco · Cruzado',desc:'Esquerda aponta para a direita e vice-versa'},
-  {id:'twoblocks',name:'Foco · Dois blocos',desc:'Esquerda e direita viradas para lados opostos'},
   {id:'fan',name:'Leque',desc:'Centro alto / extremos baixos'},
   {id:'ripple',name:'Ripple',desc:'Ondulação em sequência'},
   {id:'alternating',name:'Direitos ↓ Artistas',desc:'Todos na mesma altura, deitados e apontados para o chão'},
@@ -2191,6 +2289,10 @@ function midiAllDefs(){
   RECT_PATTERNS.forEach(p=>defs.push(['rectpattern:'+p.id,p.name,'Padrões das luzes retangulares']));
   midiScreenSources().forEach(s=>defs.push(['source:'+s.key,s.name,'Cada vídeo / visual dos ecrãs']));
   try{ cues.forEach((c,i)=>defs.push(['cue:'+i,'Cue '+(i+1)+' · '+c.n,'Cues'])); }catch(e){}
+  if(PJ_PRE){ [['foco','FOCO'],['ecra','ECRÃ'],['misto','MISTO']].forEach(([m,n])=>defs.push(['pjm:'+m,'Modo '+n,'Animação dos painéis']));
+    PJ_PRE.forEach(([id,n])=>defs.push(['pjp:'+id,'Ecrã · '+n,'Animação dos painéis']));
+    PJ_FOC.forEach(([id,n])=>defs.push(['pjf:'+id,'Foco · '+n,'Animação dos painéis']));
+    EL_PRE.forEach(([id,n])=>defs.push(['elp:'+id,n,'Elidy'])); }
   [['act:black','Blackout'],['act:move','Mover painéis'],['act:sec','Secção automática'],['act:beams','Feixes'],
    ['act:heads','Moving heads'],['act:panels','Luz dos painéis'],['act:cam','Câmara de transmissão'],
    ['act:prev','Padrão anterior'],['act:next','Padrão seguinte'],['act:vista','Vista sala / mesa']].forEach(([id,n])=>defs.push([id,n,'Ações']));
@@ -2387,6 +2489,7 @@ function midiApply(id,v,isNote){
   }
 
   if(id.startsWith('cue:')){ if(midiTrigger(id,v,isNote)) chamarCue(+id.slice(4)); return; }
+  if(/^(pjm|pjp|pjf|elp):/.test(id)){ if(midiTrigger(id,v,isNote)) pjDo(id); return; }
   if(id.startsWith('act:')){ if(midiTrigger(id,v,isNote)&&ACT[id.slice(4)]) ACT[id.slice(4)](); liveRefresh(true); return; }
   if(id.startsWith('lv:')){ if(!isNote){ lvSet(id.slice(3),v/127*1.5); faderSyncAll(); saveSoon(); } return; }
   if(id==='mhInt'){
@@ -2521,6 +2624,7 @@ $('pjGlow').onchange=e=>{ pjGlow=e.target.checked?+$('pjGlowI').value/10:0; $('p
 // A resposta à música altera amplitude/velocidade, mas nunca teletransporta os painéis.
 let rectPattern='audio', rectPatternT0=0;
 function applyRectPattern(id){
+  if({converge:1,starfan:1,crossed:1,twoblocks:1}[id]){ if(typeof pjSet==='function') pjSet({foc:id,mode:PJ.mode==='ecra'?'foco':PJ.mode}); id='audio'; }   // v1.6: agora são padrões de feixe
   if(!RECT_PATTERNS.some(p=>p.id===id)) return;
   rectPattern=id; rectPatternT0=performance.now()/1000;
   if(id==='grid') gridDeck=[];                    // a grelha volta a sortear os dois grupos   // novo sorteio de subiu/descida e diagonais
@@ -2683,7 +2787,8 @@ function jTarget(it,t,u,n){
     L+=mv.L*scale; p+=mv.p*scale;
     L+=it.bias||0; p+=it.pb||0;
   }
-  const lim=rectLim(); return {L:clamp(L,lim[0],lim[1]), p:clamp(p,-lim[2],lim[2]), rx:mv.rx, ry:mv.ry};
+  const lim=rectLim(), tu=pjTurn(it,mv.rx,mv.ry);
+  return {L:clamp(L,lim[0],lim[1]), p:clamp(p,-lim[2],lim[2]), rx:tu?tu[0]:mv.rx, ry:tu?tu[1]:mv.ry};
 }
 renderRectPatterns();
 applyRectPattern('audio');
@@ -2693,28 +2798,383 @@ function setDetect(v){ jpAuto=!!v;
   $('btnDetect').textContent=jpAuto?'Mover: ON':'Mover: OFF';
   if(typeof saveSoon==='function') saveSoon(); }
 $('btnDetect').onclick=()=>setDetect(!jpAuto);
-$('pjMode').onchange=()=>{ const m=$('pjMode').value; $('pjVid').checked=m!=='foco'; $('pjAll').checked=m==='unido'; if(m!=='foco'&&$('pjSrc').value==='screens') $('pjSrc').value='p:faiscas'; jFade=1; };
+
+/* ==================== ANIMAÇÃO DOS PAINÉIS (v1.7.0) ====================
+   Como no vídeo de referência (Justice · «Stop», WWW live):
+   · ECRÃ  — as ripas mostram uma animação (faíscas douradas, chuva, EQ…), e cada
+     painel deita um feixe fraco na cor média do que está a mostrar;
+   · FOCO  — a face acende 4 lâmpadas (2×2) e cada painel lança feixes estreitos de
+     haze apontados a um alvo (pan/tilt com limite mecânico); o painel roda para lá;
+   · MISTO — os grupos A (arco de cima), B (arco de baixo) e M (linha atrás da dupla)
+     escolhem o modo cada um.
+   Entre modos há fade ao preto: as faíscas morrem e só depois os focos acendem.
+   Estado em PJ (cues + definições); intensidades em LV (faders + MIDI). */
+var PJ={mode:'foco',grp:{A:'ecra',B:'ecra',M:'foco'},uni:false,pre:'faiscas',foc:'converge',tgt:'centro',
+  c1:'#ffb347',c2:'#fff1c8',spd:1,react:.6,trans:'fade'};
+var PJ_PRE=[['faiscas','Faíscas','Faíscas douradas a cintilar nas ripas, mais densas com a música'],
+  ['chuva','Chuva vertical','Riscos de luz a cair pelas ripas'],
+  ['eq','EQ por painel','Cada painel é uma banda do áudio: as ripas sobem e descem'],
+  ['varre','Varrimento','Uma barra de luz atravessa os painéis'],
+  ['cascata','Cascata A→B→M','Acende o arco de cima, depois o de baixo, depois a linha'],
+  ['strobe','Strobe alternado','Painéis ímpares e pares alternam (no kick, com reação ao áudio alta)'],
+  ['respirar','Respirar','Luz lenta que sobe e desce'],
+  ['cruz','Cruz repartida','Uma cruz desenhada em todos os painéis juntos']];
+var PJ_FOC=[['converge','Convergir','Todos os feixes no alvo (centro, DJs ou cruz)'],
+  ['starfan','Leque em estrela','Os feixes abrem para fora, sobre o público'],
+  ['crossed','Cruzado','A esquerda aponta para a direita e vice-versa'],
+  ['sweep','Varrimento','Os feixes varrem a sala de um lado ao outro'],
+  ['twoblocks','Dois blocos','Esquerda na cor 1 (âmbar), direita em azul, cada uma para o seu lado'],
+  ['rain','Chuva de feixes','Feixes a direito para baixo, a cair um a um'],
+  ['strobe','Strobe','Feixes no alvo, em strobe'],
+  ['off','Off','Feixes e lâmpadas apagados']];
+var PJ_TGT=[['centro','Centro'],['djs','DJs'],['cruz','Cruz']];
+try{ if(saved.pjA&&typeof saved.pjA==='object'){ Object.assign(PJ,saved.pjA); PJ.grp=Object.assign({A:'ecra',B:'ecra',M:'foco'},saved.pjA.grp||{}); }
+  else { if(saved.pjVid) PJ.mode='ecra'; if(saved.pjAll) PJ.uni=true; } }catch(e){}
+const PJ_FADE=.6;                                  // segundos para apagar (e outros tantos para acender)
+const PJ_TR={A:{em:'foco',k:1},B:{em:'foco',k:1},M:{em:'foco',k:1}};
+const pjWant=g=>PJ.mode==='misto'?(PJ.grp[g]||'foco'):PJ.mode;
+Object.keys(PJ_TR).forEach(g=>PJ_TR[g].em=pjWant(g));
+let pjT=0, elT=0, pjKickT=-9, pjBeatN=0, pjKE=0, pjLastT=0;
+const pjC1=new THREE.Color(), pjC2=new THREE.Color(), pjBlue=new THREE.Color(0x4d7bff);   // «Dois blocos»: cor 1 contra azul
+function pjCols(){ pjC1.set(PJ.c1); pjC2.set(PJ.c2); }
+pjCols();
+const pjAud=()=>(1-PJ.react)+PJ.react*clamp(.3+energy*1.5+pjKE*.6,0,1.4);
+
+/* --- textura das lâmpadas (FOCO): ripas fracas + 4 lâmpadas fortes nas ripas 2 e 4 --- */
+const lampTex=(()=>{ const c=document.createElement('canvas'); c.width=c.height=128; const x=c.getContext('2d');
+  x.fillStyle='#3a3a3a'; x.fillRect(0,0,128,128);
+  [[32,40],[84,40],[32,92],[84,92]].forEach(([cx,cy])=>{ const g=x.createRadialGradient(cx,cy,2,cx,cy,22);
+    g.addColorStop(0,'#fff'); g.addColorStop(.45,'#fff'); g.addColorStop(1,'rgba(255,255,255,0)'); x.fillStyle=g; x.fillRect(cx-22,cy-22,44,44); });
+  const t=new THREE.CanvasTexture(c); t.minFilter=THREE.LinearFilter; return t; })();
+
+/* --- presets de ecrã: desenhados num «campo» 0..1. Em individual cada painel é o
+   campo todo; em unido o campo é o conjunto dos 13 (posições reais no palco). --- */
+const PP_GLOBAL={cruz:1};
+function ppInfo(){ let X0=1e9,X1=-1e9,Y0=1e9,Y1=-1e9;
+  jp.forEach(p=>{ const x=p.f.position.x, y=p.f.position.y; X0=Math.min(X0,x-p.w/2); X1=Math.max(X1,x+p.w/2); Y0=Math.min(Y0,y-p.h/2); Y1=Math.max(Y1,y+p.h/2); });
+  if(X1<X0){ X0=-12; X1=12; Y0=3; Y1=21; }
+  return {X0,X1,Y0,Y1}; }
+function drawPP(c,W,H,p,id,tt,I,cx,cy){
+  const glob=PJ.uni||PP_GLOBAL[id];
+  let u0=0,u1=1,v0=0,v1=1;
+  if(glob){ const sx=I.X1-I.X0, sy=I.Y1-I.Y0; u0=(cx-p.w/2-I.X0)/sx; u1=(cx+p.w/2-I.X0)/sx; v0=(I.Y1-(cy+p.h/2))/sy; v1=(I.Y1-(cy-p.h/2))/sy; }
+  const PX=u=>(u-u0)/(u1-u0)*W, PY=v=>(v-v0)/(v1-v0)*H, inU=u=>u>=u0-.02&&u<=u1+.02, inV=v=>v>=v0-.02&&v<=v1+.02;
+  const c1=PJ.c1, c2=PJ.c2, R=PJ.react, e=energy, ke=pjKE;
+  c.globalAlpha=1; c.fillStyle='#000'; c.fillRect(0,0,W,H);
+  switch(id){
+    case 'faiscas': {   // faíscas douradas: muitas, pequenas, a acender e apagar, sobre um brilho quente
+      const gb=c.createLinearGradient(0,0,0,H); gb.addColorStop(0,'rgba(0,0,0,0)'); gb.addColorStop(1,c1);
+      c.globalAlpha=.10+.12*R*e; c.fillStyle=gb; c.fillRect(0,0,W,H); c.globalAlpha=1;
+      const N=glob?1500:130, seed=glob?0:p.i*977, duty=clamp(.3+R*(e*.5+ke*.35)+(1-R)*.3,.18,.9);
+      for(let j=0;j<N;j++){ const s=seed+j, u=hh(s*1.3+.1), v=hh(s*2.7+.3); if(glob&&(!inU(u)||!inV(v))) continue;
+        const ph=(tt*(.7+hh(s+7)*1.6)+hh(s+3))%1; if(ph>duty) continue;
+        const a=Math.pow(1-ph/duty,1.3), x=PX(u), y=PY(v), sz=W*(.012+hh(s+11)*.022)*(1+R*e*.8);
+        c.fillStyle=hh(s+13)>.72?c2:c1;
+        c.globalAlpha=a*.28; c.fillRect(x-sz*1.6,y-sz*1.6,sz*3.2,sz*3.2);
+        c.globalAlpha=a; c.fillRect(x-sz/2,y-sz/2,sz,sz); }
+      break; }
+    case 'chuva': {
+      const N=glob?110:9, seed=glob?0:p.i*131;
+      for(let j=0;j<N;j++){ const s=seed+j, u=glob?hh(s+.5):(j+.5)/N+(hh(s)-.5)*.06; if(glob&&!inU(u)) continue;
+        const L=.22+hh(s+4)*.25, hv=((tt*(.45+hh(s+9)*.7)+hh(s+2))%1)*(1+L)-L*.2, x=PX(u), w=Math.max(2,W*.035);
+        const g=c.createLinearGradient(0,PY(hv-L),0,PY(hv)); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(.85,c1); g.addColorStop(1,c2);
+        c.globalAlpha=.5+.5*(R*e+(1-R)*.6); c.fillStyle=g; c.fillRect(x-w/2,PY(hv-L),w,PY(hv)-PY(hv-L)); }
+      break; }
+    case 'eq': {
+      const cols=[.11,.31,.51,.71,.91];
+      cols.forEach((cu,k)=>{ const b=glob?clamp(Math.floor((u0+cu*(u1-u0))*8),0,7):p.i%8;
+        const lvl=clamp(nl[b]*(.85+.15*Math.sin(tt*3+k))*(.4+.8*(R*1+(1-R)*.6))+.04,0,1), x=cu*W, w=W*.13, seg=H/12;
+        for(let q=0;q<12;q++){ const vv=1-(q+1)/12; if(1-vv>lvl+1/12) break;
+          c.globalAlpha=1; c.fillStyle=q>8?c2:c1; c.fillRect(x-w/2,H-(q+1)*seg+2,w,seg-4); } });
+      break; }
+    case 'varre': {
+      const bu=((tt*.35)%1)*1.5-.25, bw=.2, x0=PX(bu-bw), x1=PX(bu+bw), g=c.createLinearGradient(x0,0,x1,0);
+      g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(.45,c1); g.addColorStop(.5,c2); g.addColorStop(.55,c1); g.addColorStop(1,'rgba(0,0,0,0)');
+      c.globalAlpha=clamp(.55+R*(e*.8+ke*.4),0,1); c.fillStyle=g; c.fillRect(x0,0,x1-x0,H);
+      break; }
+    case 'cascata': {
+      const gi={A:0,B:1,M:2}[p.grp]||0, d=((tt*.6)%3)-gi-((p.ax+12)/24)*.35, dd=d<-1.5?d+3:d;
+      const a=dd>=0&&dd<1?Math.sin(dd*Math.PI):0;
+      c.globalAlpha=a; c.fillStyle=c1; c.fillRect(0,0,W,H); c.globalAlpha=a*a; c.fillStyle=c2; c.fillRect(W*.2,H*.2,W*.6,H*.6);
+      break; }
+    case 'strobe': {
+      const st=R>.5?pjBeatN%2:Math.floor(tt*4)%2;
+      if((p.i%2)===st){ c.globalAlpha=1; c.fillStyle=c2; c.fillRect(0,0,W,H); }
+      break; }
+    case 'respirar': {
+      const b=.5+.5*Math.sin(tt*1.4+(glob?(u0+u1)*2:0));
+      c.globalAlpha=.15+.85*b; c.fillStyle=c1; c.fillRect(0,0,W,H); c.globalAlpha=b*b*.7; c.fillStyle=c2; c.fillRect(0,0,W,H);
+      break; }
+    case 'cruz': {
+      const a=clamp((1-R)+R*(.55+ke*.6+e*.5),0,1);
+      c.globalAlpha=a; c.fillStyle=c2;
+      c.fillRect(PX(.462),PY(.04),PX(.538)-PX(.462),PY(.96)-PY(.04));
+      c.fillRect(PX(.30),PY(.26),PX(.70)-PX(.30),PY(.37)-PY(.26));
+      break; }
+  }
+  c.globalAlpha=1;
+}
+
+/* --- alvos dos feixes (FOCO). Devolve o nível (0..1) e escreve o ponto em out --- */
+let pjBeamCol=null;
+const PJ_TURN={converge:1,starfan:1,crossed:1,twoblocks:1,strobe:1};
+function pjTgtPoint(ax,out){
+  if(PJ.tgt==='djs') return out.set(ax<-.5?-1.55:ax>.5?1.55:0,2.4,-23.9);
+  if(PJ.tgt==='cruz') return out.set(0,6.7,-29.4);
+  return out.set(0,1.6,-24.6); }
+function pjFocTarget(p,b,o,out,tt){
+  pjBeamCol=null; const sp=(b-.5)*.9;
+  switch(PJ.foc){
+    case 'converge': pjTgtPoint(p.ax,out); out.x+=sp; return 1;
+    case 'starfan': out.set(o.x*2.6+sp*3,0,-4); return 1;
+    case 'crossed': out.set(-o.x*1.5+sp,.5,-15); return 1;
+    case 'sweep': out.set(15*Math.sin(tt*.7+p.i*.32)+sp,0,-12); return 1;
+    case 'twoblocks': pjBeamCol=p.ax<0?pjC1:pjBlue; out.set((p.ax<0?-9:9)+sp,0,-14); return 1;
+    case 'rain': out.set(o.x+sp*.3,o.y-30,o.z+1.5); return Math.pow(.5+.5*Math.sin(tt*4+hh(p.i*2+b)*6.283),8);
+    case 'strobe': pjTgtPoint(p.ax,out); out.x+=sp; return ((tt*5)%1)<.35?1:0;
+    default: out.copy(o).y-=10; return 0;   // off
+  } }
+// nível das lâmpadas na face, em FOCO
+function pjFocFace(p,tt){ const o=p.f.position;
+  if(PJ.foc==='off') return 0;
+  if(PJ.foc==='strobe') return ((tt*5)%1)<.35?1:.08;
+  if(PJ.foc==='rain'){ const a=pjFocTarget(p,0,o,_pjTg,tt), b=pjFocTarget(p,1,o,_pjTg,tt); return .2+.8*Math.max(a,b); }
+  return 1; }
+
+/* --- feixes estreitos: 2 por painel (lâmpada esquerda e direita), núcleo + halo --- */
+const PJB_DOWN=new THREE.Vector3(0,-1,0), _pjO=new THREE.Vector3(), _pjN=new THREE.Vector3(), _pjTg=new THREE.Vector3(),
+      _pjD=new THREE.Vector3(), _pjV=new THREE.Vector3(), _pjQ=new THREE.Quaternion();
+const pjCoreGeo=new THREE.CylinderGeometry(.05,1.05,38,10,1,true); pjCoreGeo.translate(0,-19,0);
+const pjHaloGeo=new THREE.CylinderGeometry(.16,2.8,38,12,1,true); pjHaloGeo.translate(0,-19,0);
+const pjBeamG=new THREE.Group(); scene.add(pjBeamG);
+function pjBeamsEnsure(){
+  if(!jp.length){ if(pjBeamG.children.length){ pjBeamG.children.slice().forEach(m=>{ m.material.dispose(); pjBeamG.remove(m); }); pjBeamG.userData.ref=null; } return; }
+  if(pjBeamG.userData.ref===jp[0]) return;
+  pjBeamG.children.slice().forEach(m=>{ m.material.dispose(); pjBeamG.remove(m); }); pjBeamG.userData.ref=jp[0];
+  const mk=()=>new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0,alphaMap:beamFade,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide,fog:false});
+  jp.forEach(p=>{ p.bms=[0,1].map(()=>{ const mc=mk(), mh=mk(), c=new THREE.Mesh(pjCoreGeo,mc), h=new THREE.Mesh(pjHaloGeo,mh);
+    c.frustumCulled=h.frustumCulled=false; pjBeamG.add(c,h); return {c,h,mc,mh,dir:new THREE.Vector3(0,-.6,.8).normalize()}; }); });
+}
+const PJ_MAXC=Math.cos(78*Math.PI/180);
+function pjBeams(p,dt){
+  if(!p.bms) return;
+  p.f.updateMatrixWorld(true);
+  _pjN.set(0,0,1).applyQuaternion(p.f.quaternion);
+  const ecra=p.em==='ecra', hz=$('cHaze').checked?1:.6;
+  const aud=(1-PJ.react)+PJ.react*clamp(.45+energy*1.2+pjKE*.7,0,1.5);
+  p.bms.forEach((B,b)=>{
+    _pjO.set((b-.5)*1.1,0,.3).applyMatrix4(p.f.matrixWorld);
+    let lvl;
+    if(ecra){ _pjTg.copy(_pjO).addScaledVector(_pjN,8); _pjTg.y-=12; lvl=.6*clamp(.25+p.vidT*1.8,0,1); pjBeamCol=null; }
+    else lvl=pjFocTarget(p,b,_pjO,_pjTg,pjT);
+    _pjD.subVectors(_pjTg,_pjO).normalize();
+    // limite mecânico: a lâmpada dentro do painel só roda até 78° em relação à face
+    const ca=_pjD.dot(_pjN);
+    if(ca<PJ_MAXC){ _pjV.copy(_pjD).addScaledVector(_pjN,-ca); if(_pjV.lengthSq()<1e-6) _pjV.set(0,-1,0); _pjV.normalize();
+      _pjD.copy(_pjN).multiplyScalar(PJ_MAXC).addScaledVector(_pjV,Math.sqrt(1-PJ_MAXC*PJ_MAXC)); }
+    B.dir.lerp(_pjD,1-Math.exp(-dt*7)).normalize();            // pan/tilt com inércia
+    _pjQ.setFromUnitVectors(PJB_DOWN,B.dir);
+    B.c.position.copy(_pjO); B.h.position.copy(_pjO); B.c.quaternion.copy(_pjQ); B.h.quaternion.copy(_pjQ);
+    const I=clamp(lvl,0,1.5)*p.tk*p.offK*LV.foco*aud*hz*LV.mestre;
+    const col=pjBeamCol||(ecra&&p.vcol?jtc.copy(p.vcol).multiplyScalar(1/Math.max(.05,p.vcol.r,p.vcol.g,p.vcol.b)):p.col);
+    B.mc.color.copy(col); B.mh.color.copy(col);
+    B.mc.opacity=clamp(.34*I,0,.6); B.mh.opacity=clamp(.085*I,0,.22);
+    B.c.visible=B.h.visible=B.mc.opacity>.003;
+  });
+}
+// o painel vira-se (cardã) para o alvo do padrão de foco
+function pjTurn(it,rx,ry){
+  if(it.em!=='foco'||!PJ_TURN[PJ.foc]||rx||ry) return null;
+  pjFocTarget(it,.5,it.f.position,_pjTg,pjT); _pjD.subVectors(_pjTg,it.f.position);
+  const y=clamp(Math.atan2(_pjD.x,Math.max(.5,_pjD.z)),-.55,.55), x=clamp(Math.atan2(-_pjD.y,Math.hypot(_pjD.x,_pjD.z)),-.15,.9);
+  return [x*.6,y*.6]; }
+
+/* --- passo por imagem: transições, texturas e desenho das ripas --- */
+function pjAnimStep(t,dt,kick){
+  // tempo real (não o dt do motor, que é limitado a 0,05 s): o fade dura o mesmo com 20 ou 120 fps
+  const sd=Math.max(0,Math.min(.25,t-pjLastT)); pjLastT=t;
+  pjT+=sd*PJ.spd; elT+=sd*EL.spd; if(kick){ pjKickT=t; pjBeatN++; elRings.push(t); if(elRings.length>8) elRings.shift(); }
+  pjKE=Math.exp(-(t-pjKickT)*6);
+  for(const g in PJ_TR){ const tr=PJ_TR[g], want=pjWant(g);
+    if(tr.em!==want){ if(PJ.trans==='mix'){ tr.em=want; } else { tr.k-=sd/PJ_FADE; if(tr.k<=0){ tr.k=0; tr.em=want; } } }
+    else tr.k=Math.min(1,tr.k+sd/PJ_FADE); }
+  pjBeamsEnsure();
+  const src=$('pjSrc').value, pp=src==='pp';
+  let anyE=false;
+  jp.forEach(p=>{ const tr=PJ_TR[p.grp]||PJ_TR.M; p.em=tr.em; p.tk=tr.k; if(p.em==='ecra') anyE=true;
+    const want=p.em==='ecra'?((pp||PJ.uni)?p.spanTex:vpt):lampTex;
+    if(p.mat.map!==want){ p.mat.map=want; p.mat.needsUpdate=true; }
+    p.fl=p.em==='foco'?pjFocFace(p,pjT):1; });
+  jVid=anyE; jJoin=anyE&&PJ.uni&&!pp;
+  if(anyE&&frame%2===0){
+    if(pp){ const I=ppInfo(); jp.forEach(p=>{ if(p.em!=='ecra') return; drawPP(p.vx,320,320,p,PJ.pre,pjT,I,p.f.position.x,p.f.position.y); p.spanTex.needsUpdate=true; }); }
+    else if(PJ.uni){ jp.forEach(p=>{ if(p.em!=='ecra') return; drawJointSlice(p.vx,320,320,p.ax,p.w,t); p.spanTex.needsUpdate=true; }); }
+    else { drawSrc(vpx,getPSrc(),320,320,t); vpt.needsUpdate=true; }
+    if(frame%4===0) jp.forEach(p=>{ if(p.em!=='ecra') return; const cx=(pp||PJ.uni)?p.vx:vpx; pjColOf(p,cx);
+      if(p.vcol) p.vidT=clamp((.2126*p.vcol.r+.7152*p.vcol.g+.0722*p.vcol.b)*(pp?4:1.6),0,1); });
+  }
+}
+
+/* ==================== PAREDE ELIDY ====================
+   O ecrã gigante traseiro (screens[4] no palco Justice WWW), logo atrás dos
+   Marshalls. Com o ELIDY ligado, mostra estes presets em vez do visual dos ecrãs. */
+var EL={on:true,pre:'cruzfaiscas',c1:'#ffffff',c2:'#ffb347',spd:1,react:.6,txt:'JUSTICE',src:'preset'};
+var EL_PRE=[['cruz','Cruz','Cruz branca ao centro, pulsa com o kick'],['faiscas','Faíscas douradas','Faíscas dos dois lados do centro'],
+  ['cruzfaiscas','Cruz + faíscas','A cruz com faíscas douradas dos lados (como no vídeo)'],['espectro','Espectro','Barras do áudio, espelhadas a partir do centro'],
+  ['pixel','Pixel Elidy','Os pixels grandes da parede a cintilar nas duas cores'],['scanner','Scanner','Barras de luz a varrer na horizontal e na vertical'],
+  ['pulso','Pulso','Uma onda radial a cada kick'],['aurora','Aurora / pôr do sol','Gradiente lento entre as duas cores'],
+  ['texto','Texto','Letreiro editável (ex.: JUSTICE, WOMAN WORLDWIDE)'],['pb','Preto / Branco','Preto, com flash branco no kick (sem reação: alterna)']];
+try{ if(saved.el&&typeof saved.el==='object') Object.assign(EL,saved.el); }catch(e){}
+const elRings=[];
+const elOn=()=>EL.on&&curStage==='accor'&&nScr>4&&!!screens[4];
+function drawElidy(c,W,H,pre,tt,ke){
+  const R=EL.react, c1=EL.c1, c2=EL.c2, A=clamp((1-R)+R*(.5+ke*.6+nl[0]*.4),0,1.2);
+  c.globalAlpha=1; c.shadowBlur=0; c.fillStyle='#000'; c.fillRect(0,0,W,H);
+  const cruz=()=>{ const bw=H*.075; c.globalAlpha=clamp(A,0,1); c.fillStyle=c1; c.shadowColor=c1; c.shadowBlur=H*.06;
+    c.fillRect(W/2-bw/2,H*.08,bw,H*.84); c.fillRect(W/2-H*.21,H*.29,H*.42,bw); c.shadowBlur=0; c.globalAlpha=1; };
+  const faiscas=()=>{ for(let i=0;i<180;i++){ const side=i%2?1:-1, x=W/2+side*(H*.3+hh(i)*W*.42), ph=(tt*(.3+hh(i+60)*.6)+hh(i+300))%1,
+      y=H*(1.02-ph*1.08), tw=.5+.5*Math.sin(tt*9+i), s=H*(.012+hh(i+90)*.016)*(1+R*nl[1]*1.2);
+      c.globalAlpha=clamp((1-ph)*tw*(.5+R*energy+(1-R)*.4),0,1); c.fillStyle=hh(i+7)>.8?'#fff':c2; c.fillRect(x-s/2,y-s/2,s,s);
+      c.globalAlpha*=.25; c.fillRect(x-s*1.5,y-s*1.5,s*3,s*3); } c.globalAlpha=1; };
+  switch(pre){
+    case 'cruz': cruz(); break;
+    case 'faiscas': faiscas(); break;
+    case 'cruzfaiscas': faiscas(); cruz(); break;
+    case 'espectro': { const n=48; for(let i=0;i<n;i++){ const d=Math.abs(i-(n-1)/2)/((n-1)/2), f=d*7, a=Math.floor(f), b=Math.min(7,a+1), v=nl[a]+(nl[b]-nl[a])*(f-a);
+        const h=H*clamp(.05+v*(.4+R*.6)*(.85+.15*Math.sin(tt*6+i)),0,1), g=c.createLinearGradient(0,H,0,H-h); g.addColorStop(0,c1); g.addColorStop(1,c2);
+        c.fillStyle=g; c.fillRect(i*W/n+2,(H-h)/2,W/n-4,h); } break; }
+    case 'pixel': { const cols=36, rows=12, cw=W/cols, rh=H/rows; for(let i=0;i<cols*rows;i++){ const k=Math.floor(tt*2.5+hh(i)*7), r=hh(i*1.7+k*3.1);
+        if(r<.45) continue; c.fillStyle=r>.86?c2:c1; c.globalAlpha=clamp((r-.45)*1.8*(.4+R*energy*1.6+(1-R)*.5),0,1);
+        c.fillRect((i%cols)*cw+cw*.15,Math.floor(i/cols)*rh+rh*.15,cw*.7,rh*.7); } c.globalAlpha=1; break; }
+    case 'scanner': { const y=(Math.sin(tt*1.3)*.5+.5)*H, x=(Math.sin(tt*.9+1)*.5+.5)*W;
+        let g=c.createLinearGradient(0,y-H*.12,0,y+H*.12); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(.5,c1); g.addColorStop(1,'rgba(0,0,0,0)');
+        c.globalAlpha=clamp(A,0,1); c.fillStyle=g; c.fillRect(0,y-H*.12,W,H*.24);
+        g=c.createLinearGradient(x-W*.05,0,x+W*.05,0); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(.5,c2); g.addColorStop(1,'rgba(0,0,0,0)');
+        c.fillStyle=g; c.fillRect(x-W*.05,0,W*.1,H); c.globalAlpha=1; break; }
+    case 'pulso': { const now=pjLastT; c.lineWidth=H*.03;
+        for(const t0 of elRings){ const p=(now-t0)/(1.6/Math.max(.2,EL.spd)); if(p<0||p>1) continue;
+          c.globalAlpha=(1-p)*(.4+.6*R); c.strokeStyle=c2; c.beginPath(); c.ellipse(W/2,H/2,p*W*.55,p*H*.75,0,0,6.283); c.stroke(); }
+        const g=c.createRadialGradient(W/2,H/2,0,W/2,H/2,H*.5); g.addColorStop(0,c1); g.addColorStop(1,'rgba(0,0,0,0)');
+        c.globalAlpha=.25+.6*ke*R; c.fillStyle=g; c.fillRect(0,0,W,H); c.globalAlpha=1; break; }
+    case 'aurora': { const g=c.createLinearGradient(0,0,W,0), o=Math.sin(tt*.25)*.25;
+        g.addColorStop(0,c1); g.addColorStop(clamp(.5+o,.1,.9),c2); g.addColorStop(1,c1); c.globalAlpha=clamp(.55+R*nl[1]*.6,0,1); c.fillStyle=g; c.fillRect(0,0,W,H);
+        for(let k=0;k<3;k++){ c.globalAlpha=.18; c.fillStyle='#fff'; c.beginPath(); for(let x=0;x<=W;x+=W/40){ const y=H*(.3+k*.18)+Math.sin(x/W*6+tt*(.6+k*.3))*H*.06; x?c.lineTo(x,y):c.moveTo(x,y); } c.lineTo(W,H); c.lineTo(0,H); c.fill(); }
+        const v=c.createLinearGradient(0,0,0,H); v.addColorStop(0,'rgba(0,0,0,.85)'); v.addColorStop(.5,'rgba(0,0,0,0)'); c.globalAlpha=1; c.fillStyle=v; c.fillRect(0,0,W,H); break; }
+    case 'texto': { const txt=(EL.txt||'').toUpperCase(); c.font='800 '+Math.round(H*.42)+'px "Helvetica Neue",Arial,sans-serif'; c.textBaseline='middle';
+        const tw=c.measureText(txt).width; let x=(W-tw)/2; if(tw>W*.92) x=W-((tt*160)%(tw+W));
+        c.globalAlpha=clamp(A,0,1); c.fillStyle=c1; c.shadowColor=c2; c.shadowBlur=H*.05; c.fillText(txt,x,H/2); c.shadowBlur=0; c.globalAlpha=1; break; }
+    case 'pb': { const a=R>0?clamp(ke*(.4+R),0,1):(Math.floor(tt*1.5)%2); c.globalAlpha=a; c.fillStyle='#fff'; c.fillRect(0,0,W,H); c.globalAlpha=1; break; }
+  }
+  c.globalAlpha=1; c.shadowBlur=0;
+}
+function elidyWall(t){
+  const s=screens[4]; if(!s) return;
+  if(!elOn()){ if(s.__el){ s.__el=false; s.mesh.material.color.setScalar(1); } return; }
+  s.__el=true;
+  const m=EL.src!=='preset'?mediaSrcs[+EL.src.slice(2)]:null;
+  if(!(m&&drawSrc(s.ctx,m,s.cw,CH,t))) drawElidy(s.ctx,s.cw,CH,EL.pre,elT,pjKE);
+  s.tex.needsUpdate=true; s.mesh.material.color.setScalar(clamp(LV.elidy,0,1.5));
+}
+
+/* ==================== UI: painéis, consola e Elidy ==================== */
+function pjFill(){
+  const mk=(root,list,attr)=>{ const r=$(root); if(!r) return; r.innerHTML='';
+    list.forEach(([id,n,d])=>{ const b=document.createElement('button'); b.className='chip'; b.dataset[attr]=id; b.textContent=n; if(d) b.dataset.tip=n+' — '+d; r.appendChild(b); }); };
+  mk('pjPreChips',PJ_PRE,'pjpre'); mk('pjFocChips',PJ_FOC,'pjfoc'); mk('amPre',PJ_PRE,'pjpre'); mk('amFoc',PJ_FOC,'pjfoc'); mk('elPreChips',EL_PRE,'elpre');
+}
+pjFill();
+const mkOpt=sel=>{ const e=$(sel); if(e) e.innerHTML='<option value="foco">FOCO</option><option value="ecra">ECRÃ</option>'; };
+['pjGA','pjGB','pjGM'].forEach(mkOpt);
+function pjSyncUI(){
+  const tg=(sel,attr,val)=>document.querySelectorAll('['+sel+']').forEach(b=>{ const on=b.getAttribute(sel)===val; b.classList.toggle('on',on); b.classList.toggle('active',on); });
+  tg('data-pjm',0,PJ.mode); tg('data-pjpre',0,PJ.pre); tg('data-pjfoc',0,PJ.foc); tg('data-pjt',0,PJ.tgt); tg('data-elpre',0,EL.on?EL.pre:'');
+  $('pjVid').checked=PJ.mode!=='foco'; $('pjAll').checked=!!PJ.uni; marca('amUni',PJ.uni); marca('amFade',PJ.trans==='fade');
+  [['pjGA','A'],['pjGB','B'],['pjGM','M']].forEach(([id,g])=>{ const e=$(id); if(e) e.value=PJ.grp[g]; });
+  if($('pjGrpRow')) $('pjGrpRow').style.display=PJ.mode==='misto'?'':'none';
+  const sv=(id,v)=>{ const e=$(id); if(e&&document.activeElement!==e&&String(e.value)!==String(v)) e.value=v; };
+  sv('pjTrans',PJ.trans); sv('pjTgt',PJ.tgt); sv('pjC1',PJ.c1); sv('pjC2',PJ.c2); sv('amC1',PJ.c1); sv('amC2',PJ.c2);
+  sv('pjSpd',Math.round(PJ.spd*100)); sv('pjReact',Math.round(PJ.react*100));
+  if($('pjSpdV')) $('pjSpdV').textContent=Math.round(PJ.spd*100)+'%'; if($('pjReactV')) $('pjReactV').textContent=Math.round(PJ.react*100)+'%';
+  $('elOn').checked=!!EL.on; sv('elSrc',EL.src); sv('elC1',EL.c1); sv('elC2',EL.c2); sv('elSpd',Math.round(EL.spd*100)); sv('elReact',Math.round(EL.react*100)); sv('elTxt',EL.txt);
+  sv('elInt',Math.round(LV.elidy*100));
+  $('elSpdV').textContent=Math.round(EL.spd*100)+'%'; $('elReactV').textContent=Math.round(EL.react*100)+'%'; $('elIntV').textContent=Math.round(LV.elidy*100)+'%';
+}
+function pjSet(o){ Object.assign(PJ,o); pjCols(); pjSyncUI(); registar(); saveSoon(); }
+function elSet(o){ Object.assign(EL,o); dirty=true; pjSyncUI(); registar(); saveSoon(); }
+document.addEventListener('click',e=>{
+  if(document.body.classList.contains('layout-edit')) return;
+  const b=e.target.closest&&e.target.closest('[data-pjm],[data-pjpre],[data-pjfoc],[data-pjt],[data-elpre],[data-eltxt]'); if(!b) return;
+  if(b.dataset.pjm) pjSet({mode:b.dataset.pjm});
+  else if(b.dataset.pjpre) pjSet({pre:b.dataset.pjpre,mode:PJ.mode==='foco'?'ecra':PJ.mode});
+  else if(b.dataset.pjfoc) pjSet({foc:b.dataset.pjfoc,mode:PJ.mode==='ecra'?'foco':PJ.mode});
+  else if(b.dataset.pjt) pjSet({tgt:b.dataset.pjt});
+  else if(b.dataset.elpre) elSet({pre:b.dataset.elpre,on:true,src:'preset'});
+  else if(b.dataset.eltxt) elSet({txt:b.dataset.eltxt,pre:'texto',on:true,src:'preset'});
+});
+// o interruptor «Vídeo» (camadas, MIDI, consola) e o «Unido» continuam a valer
+$('pjVid').addEventListener('change',()=>pjSet({mode:$('pjVid').checked?(PJ.mode==='foco'?'ecra':PJ.mode):'foco'}));
+$('pjAll').addEventListener('change',()=>pjSet({uni:$('pjAll').checked}));
+[['pjGA','A'],['pjGB','B'],['pjGM','M']].forEach(([id,g])=>$(id).onchange=e=>{ const grp=Object.assign({},PJ.grp); grp[g]=e.target.value; pjSet({grp}); });
+$('pjTrans').onchange=e=>pjSet({trans:e.target.value});
+$('pjTgt').onchange=e=>pjSet({tgt:e.target.value});
+['pjC1','amC1'].forEach(id=>$(id).oninput=e=>pjSet({c1:e.target.value}));
+['pjC2','amC2'].forEach(id=>$(id).oninput=e=>pjSet({c2:e.target.value}));
+$('pjSpd').oninput=e=>pjSet({spd:+e.target.value/100});
+$('pjReact').oninput=e=>pjSet({react:+e.target.value/100});
+$('amUni').onclick=()=>pjSet({uni:!PJ.uni});
+$('amFade').onclick=()=>pjSet({trans:PJ.trans==='fade'?'mix':'fade'});
+$('elOn').onchange=e=>elSet({on:e.target.checked});
+$('elSrc').onchange=e=>elSet({src:e.target.value});
+$('elC1').oninput=e=>elSet({c1:e.target.value}); $('elC2').oninput=e=>elSet({c2:e.target.value});
+$('elSpd').oninput=e=>elSet({spd:+e.target.value/100});
+$('elReact').oninput=e=>elSet({react:+e.target.value/100});
+$('elInt').oninput=e=>{ lvSet('elidy',+e.target.value/100); pjSyncUI(); saveSoon(); };
+$('elTxt').oninput=e=>elSet({txt:e.target.value});
+// as acções por MIDI
+function pjDo(id){ const [k,v]=[id.slice(0,3),id.slice(4)];
+  if(k==='pjm') pjSet({mode:v}); else if(k==='pjp') pjSet({pre:v,mode:PJ.mode==='foco'?'ecra':PJ.mode});
+  else if(k==='pjf') pjSet({foc:v,mode:PJ.mode==='ecra'?'foco':PJ.mode}); else if(k==='elp') elSet({pre:v,on:true,src:'preset'}); }
+
+/* --- pré-visualizações (callout) --- */
+function pvJp(){ return jp.map(p=>({p,x:p.f.position.x,y:p.f.position.y})); }
+function pvFit(W,H,pts,pad){ let X0=1e9,X1=-1e9,Y0=1e9,Y1=-1e9; pts.forEach(o=>{ X0=Math.min(X0,o.x-2); X1=Math.max(X1,o.x+2); Y0=Math.min(Y0,o.y-2); Y1=Math.max(Y1,o.y+2); });
+  Y0=Math.min(Y0,0); const k=Math.min((W-pad*2)/(X1-X0),(H-pad*2)/(Y1-Y0)); return {X:x=>W/2+(x-(X0+X1)/2)*k, Y:y=>H-pad-(y-Y0)*k, k}; }
+function pvPP(ctx,W,H,id,t){
+  ctx.fillStyle='#050507'; ctx.fillRect(0,0,W,H);
+  const pts=pvJp(); if(!pts.length){ ctx.fillStyle='#888'; ctx.fillText('Justice WWW',10,20); return; }
+  const F=pvFit(W,H,pts,8), I=ppInfo(), sav=PJ.pre;
+  pts.forEach(({p,x,y})=>{ const s=p.w*F.k; ctx.save(); ctx.translate(F.X(x)-s/2,F.Y(y)-s/2);
+    ctx.beginPath(); ctx.rect(0,0,s,s); ctx.clip(); ctx.scale(s/320,s/320);
+    drawPP(ctx,320,320,p,id,t*PJ.spd,I,x,y);
+    ctx.fillStyle='#000'; for(let q=0;q<4;q++) ctx.fillRect(320*(.2+q*.2)-8,0,16,320);   // as ripas
+    ctx.restore(); ctx.strokeStyle='#2c2d35'; ctx.lineWidth=1; ctx.strokeRect(F.X(x)-s/2,F.Y(y)-s/2,s,s); });
+}
+function pvFoc(ctx,W,H,id,t){
+  ctx.fillStyle='#050507'; ctx.fillRect(0,0,W,H);
+  const pts=pvJp(); if(!pts.length) return;
+  const F=pvFit(W,H,pts,10), sv=PJ.foc; PJ.foc=id;
+  try{
+    ctx.strokeStyle='#2a2b33'; ctx.beginPath(); ctx.moveTo(0,F.Y(0)); ctx.lineTo(W,F.Y(0)); ctx.stroke();
+    ctx.globalCompositeOperation='lighter';
+    pts.forEach(({p,x,y})=>{ for(let b=0;b<2;b++){ const o=_pjO.set(x+(b-.5)*1.1,y,p.f.position.z);
+      const l=pjFocTarget(p,b,o,_pjTg,t*PJ.spd); if(l<=0) continue;
+      const col='#'+(pjBeamCol||p.col).getHexString(), tx=F.X(_pjTg.x), ty=F.Y(Math.max(0,_pjTg.y)), ox=F.X(o.x), oy=F.Y(y);
+      const g=ctx.createLinearGradient(ox,oy,tx,ty); g.addColorStop(0,col); g.addColorStop(1,'rgba(0,0,0,0)');
+      const ang=Math.atan2(ty-oy,tx-ox), nx=-Math.sin(ang)*6, ny=Math.cos(ang)*6;
+      ctx.globalAlpha=clamp(l,0,1)*.8; ctx.fillStyle=g; ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(tx+nx,ty+ny); ctx.lineTo(tx-nx,ty-ny); ctx.fill(); } });
+    ctx.globalCompositeOperation='source-over'; ctx.globalAlpha=1;
+    pts.forEach(({p,x,y})=>{ const s=p.w*F.k*.8; ctx.fillStyle='#16171c'; ctx.fillRect(F.X(x)-s/2,F.Y(y)-s/2,s,s);
+      const f=pjFocFace(p,t*PJ.spd); ctx.fillStyle='#'+(p.col).getHexString(); ctx.globalAlpha=.25+.75*f;
+      [[-.22,-.2],[.22,-.2],[-.22,.2],[.22,.2]].forEach(([a,b2])=>ctx.fillRect(F.X(x)+a*s-2,F.Y(y)+b2*s-2,4,4)); ctx.globalAlpha=1; });
+  } finally { PJ.foc=sv; ctx.globalCompositeOperation='source-over'; ctx.globalAlpha=1; }
+}
+const pvKE=t=>Math.exp(-((t*2.13)%1)*6);
 
 function updateJ(t,dt,kick){
   let pjLitAcc=0; pjN=jp.length;
-  const n=SEC.name, u=clamp((t-SEC.t0)/14,0,1), mode=$('pjCol').value, want=$('pjVid').checked, joined=want&&$('pjAll').checked&&curStage==='accor';
-  if(want!==jVid||joined!==jJoin){
-    jVid=want; jJoin=joined;
-    jp.forEach(p=>{ p.mat.map=!jVid?null:(jJoin?p.spanTex:vpt); p.mat.needsUpdate=true; });
-    jCross.forEach(c=>{ c.mat.map=!jVid?null:(jJoin?c.spanTex:vpt); c.mat.needsUpdate=true; });
-    dirty=true;
-  }
-  if(jVid&&frame%2===0){
-    if(jJoin){
-      jp.forEach(p=>{ drawJointSlice(p.vx,320,320,p.ax,p.w,t); p.spanTex.needsUpdate=true; });
-      jCross.forEach(c=>{ drawJointSlice(c.vx,c.vc.width,c.vc.height,c.ax,c.w,t); c.spanTex.needsUpdate=true; });
-    } else { drawSrc(vpx,getPSrc(),320,320,t); vpt.needsUpdate=true; }
-    // uma leitura de cada 4 frames chega: o lancador sobe e desce devagar na mesma
-    if(frame%4===0){
-      if(jJoin) jp.forEach(p=>{ const v=vidLum(p.vx,320,320); if(v!==null) p.vidT=v; pjColOf(p,p.vx); });
-      else { const v=vidLum(vpx,320,320); if(v!==null) jp.forEach(p=>p.vidT=v); jp.forEach(p=>pjColOf(p,vpx)); } }
-  }
-  if(kick) jFlash=1; jFlash*=Math.exp(-dt*5); jFade=Math.max(0,jFade-dt/.7);
+  const n=SEC.name, u=clamp((t-SEC.t0)/14,0,1), mode=$('pjCol').value;
+  pjAnimStep(t,dt,kick);      // modos, transição, texturas e desenho das ripas
+  if(kick) jFlash=1; jFlash*=Math.exp(-dt*5);
   if(jT0!==SEC.t0){ jT0=SEC.t0; jsv+=.01; jpv+=.006; }
   // balanço de pêndulo partilhado (período ~7 s, amortecido)
   jsv+=(-.7*jsw-.35*jsv+.0035*Math.sin(t*.31)+.0025*Math.sin(t*.53+1))*dt; jsw=clamp(jsw+jsv*dt,-.06,.06);
@@ -2746,8 +3206,11 @@ function updateJ(t,dt,kick){
       const lx=p.f.position.x+wV.x, ly=p.f.position.y+wV.y, lz=p.f.position.z+wV.z;
       wV.set(W/2,p.h/2,0).applyMatrix4(wM);
       wp.set([p.ax-W/2,AY,p.az,lx,ly,lz,p.ax+W/2,AY,p.az,p.f.position.x+wV.x,p.f.position.y+wV.y,p.f.position.z+wV.z],b); }
-    if(mode==='fix') jtc.copy(jFix); else if(mode==='www'&&!jVid) jtc.set(p.grp==='A'?0x6a5cff:p.grp==='B'?0xb058e8:0xff7aa8); else if(jVid&&p.vcol) jtc.copy(p.vcol).multiplyScalar(1.2);   // modo ECRÃ: a luz segue a cor do que o painel mostra
-    else if(mode==='white'||jVid) jtc.setRGB(1,1,1);
+    const ecra=p.em==='ecra';
+    if(ecra&&p.vcol){ jtc.copy(p.vcol); const mx=Math.max(p.vcol.r,p.vcol.g,p.vcol.b); if(mx>.02) jtc.multiplyScalar(1/mx); else jtc.setRGB(1,1,1); }   // ECRÃ: a luz segue a cor do que o painel mostra
+    else if(!ecra&&PJ.foc==='twoblocks') jtc.copy(p.ax<0?pjC1:pjBlue);
+    else if(mode==='fix') jtc.copy(jFix); else if(mode==='www') jtc.set(p.grp==='A'?0x6a5cff:p.grp==='B'?0xb058e8:0xff7aa8);
+    else if(mode==='white') jtc.setRGB(1,1,1);
     else if(n==='intro') jtc.setHSL(.6,.5,.6); else if(n==='build') jtc.setHSL(.55+.3*u,.9,.6);
     else if(n==='drop') jtc.setHSL((t*.06+p.i/18)%1,.9,.55); else if(n==='break') jtc.setHSL(.62,.8,.5);
     else jtc.setHSL((t*.015+p.i*.01)%1,.25,.75);
@@ -2757,12 +3220,16 @@ function updateJ(t,dt,kick){
     // Perto do topo do tom a atenuacao da secao levanta, senao um painel branco ficava
     // cinzento. A curva e ao quadrado para o meio do slider nao dar um salto grande.
     p.offK=p.offK===undefined?1:p.offK+((rectPattern==='off'?0:1)-p.offK)*(1-Math.exp(-dt*1.6));
-    const brk=lerp(br*LV.painel, Math.max(br*LV.painel,1), pjTon*pjTon)*p.offK;
-    p.mat.color.copy(p.col).multiplyScalar(brk*(1-jFade));
-    // O brilho segue a COR, nao um valor fixo: medimos a luminancia do que o painel esta
-    // mesmo a mostrar, e so passa de um limiar. Um painel escuro ou desligado nao brilha;
-    // um branco ou um magenta vivo brilha como deve ser.
-    const pc=p.mat.color, lum=.2126*pc.r+.7152*pc.g+.0722*pc.b;
+    let lum;
+    if(ecra){ // ECRÃ: a textura manda na cor; o material só dá o brilho (fader Painéis, transição, áudio)
+      const gE=clamp(LV.painel*1.5,0,1.7)*p.offK*p.tk*pjAud(); p.mat.color.setScalar(gE);
+      lum=clamp(p.vidT*gE*.9,0,1.2); }
+    else {   // FOCO: lâmpadas na cor do painel, no nível do padrão
+      const brk=lerp(br*LV.painel, Math.max(br*LV.painel,1), pjTon*pjTon)*p.offK*p.tk*p.fl*(.55+.45*pjAud());
+      p.mat.color.copy(p.col).multiplyScalar(brk*1.35);
+      // O brilho segue a COR, nao um valor fixo: medimos a luminancia do que o painel esta
+      // mesmo a mostrar, e so passa de um limiar. Um painel escuro ou desligado nao brilha.
+      const pc=p.mat.color; lum=.2126*pc.r+.7152*pc.g+.0722*pc.b; }
     const amt=clamp((lum-.22)/.62,0,1), glow=(amt*amt*.6+amt*.4)*pjGlow*p.offK;
     // quanto o painel esta realmente aceso, sem o limiar do halo: e esta medida que
     // apaga os feixes do palco (so mesmo preto leva a zero) e que enfraquece o lancador.
@@ -2777,12 +3244,13 @@ function updateJ(t,dt,kick){
     // o video projetado manda no lancador: video preto no painel = lancador em baixo.
     // Sem video, vale 1 e o lancador fica so com a cor, como antes.
     p.vidL+=(p.vidT-p.vidL)*(1-Math.exp(-dt*4.5));
-    const vidF=jVid?(.07+.93*clamp((p.vidL-.09)/.6,0,1)):1;
+    const vidF=ecra?(.07+.93*clamp((p.vidL-.09)/.6,0,1)):.4;   // em FOCO os feixes estreitos fazem o trabalho
     if(p.throwG){
       p.thMat.color.copy(p.col);
       // ao quadrado: com a cor a escurecer o lavado cai depressa, e com o painel preto
       // deixa de haver lancador altogether
       p.thMat.opacity=clamp(lit*lit*vidF*LV.painelLancador*(.34+.14*down),0,.45); }
+    pjBeams(p,dt);   // feixes estreitos: FOCO fortes e apontados, ECRÃ fracos na cor do que mostra
   });
   if(marshL){ let r=0,g=0,b=0,k=0; jp.forEach(p=>{ if(p.grp==='M'){ r+=p.col.r; g+=p.col.g; b+=p.col.b; k++; } }); if(k) marshL.c.setRGB(r/k,g/k,b/k); }
   if(wp){ jwire.geometry.attributes.position.needsUpdate=true; }
@@ -2961,7 +3429,7 @@ $('tog').onclick=togglePanel;
    leem o estado de la, para nunca ficarem a dizer uma coisa e o palco outra. */
 // Os bancos ja estao no HTML (um <details> por grupo). Nao ha abas: veem-se todos os
 // cabecalhos de uma vez, que e o que se quer — e o que se fecha fica fechado.
-const BANCO_CORES={som:'#ffb04a',palco:'#6aa8ff',luz:'#7dff2a',paineis:'#ff3df2',
+const BANCO_CORES={som:'#ffb04a',palco:'#6aa8ff',luz:'#7dff2a',paineis:'#ff3df2',elidy:'#ffd479',
   camera:'#3df0ff',ecras:'#b06aff',heads:'#ff8a3d',mesa:'#9aa0b4'};
 document.querySelectorAll('details.banco').forEach(d=>{
   const g=d.dataset.g; if(BANCO_CORES[g]) d.style.setProperty('--co',BANCO_CORES[g]);
@@ -3153,8 +3621,8 @@ const BANKS=[
    fLV('painel','Painéis','#ff3df2',togDef('pjGlow','LUZ')), fLV('painelLuz','Luz pain.','#ff7af5'),
    fLV('painelLancador','Lançador','#ff9af7'), fLV('ecra','Ecrãs','#b06aff'),
    fLV('plateia','Público','#3df0ff',togDef('cBalls','BOLAS')), fIn('mhInt','Heads','#ff8a3d',0,100,v=>Math.round(v)+'%',70,togDef('cHeads','ON'))]},
- {n:'FX',f:[fLV('cruz','Cruz','#ff3df2'), fLV('led','LEDs','#7dff2a'), fLV('cabeca','Lentes','#ff8a3d'),
-   fLV('poeira','Poeira','#9aa0b4',togDef('cHaze','ON')), fLV('painelHalo','Halo pain.','#ff7af5'),
+ {n:'FX',f:[fLV('elidy','Elidy','#ffd479'), fLV('led','LEDs','#7dff2a'), fLV('cabeca','Lentes','#ff8a3d'),
+   fLV('poeira','Poeira','#9aa0b4',togDef('cHaze','ON')), fLV('foco','Foco','#fff4c2'),
    fLV('exposicao','Exposição','#ffd479',togDef('cShadow','SOMBRA')),
    fIn('sens','Sensib.','#ffb04a',-20,20,v=>(v>0?'+':'')+Math.round(v)+'dB',0), fIn('pjGlowI','Força pain.','#ff3df2',0,120,v=>(v/10).toFixed(1),22)]}];
 let bank=(+saved.bank||0)%BANKS.length, MASTER=null; const FADERS=[];
@@ -3258,12 +3726,16 @@ const ACT={black:()=>preto(!emPreto), move:()=>setDetect(!jpAuto), sec:()=>setSe
    mk2: Note On no canal 0–6 = brilho, velocity = cor da paleta. mk1: velocity 1 verde,
    3 vermelho, 5 amarelo. Botões de faixa/cena: 0 apagado, 1 aceso. Só se envia
    quando muda alguma coisa. */
-const APC_COR={'Cues':21,'Padrões das luzes retangulares':53,'Padrões dos moving heads':9,'Cada vídeo / visual dos ecrãs':45,'Ações':5,'Controlos':37,'Faders':3};
+const APC_COR={'Animação dos painéis':13,'Elidy':49,'Cues':21,'Padrões das luzes retangulares':53,'Padrões dos moving heads':9,'Cada vídeo / visual dos ecrãs':45,'Ações':5,'Controlos':37,'Faders':3};
 let apcSig='';
 function apcAtivo(id){
   if(id.startsWith('cue:')) return cueOn===+id.slice(4);
   if(id.startsWith('rectpattern:')) return rectPattern===id.slice(12);
   if(id.startsWith('mhpattern:')) return mhPattern===id.slice(10)&&$('cHeads').checked;
+  if(id.startsWith('pjm:')) return PJ.mode===id.slice(4);
+  if(id.startsWith('pjp:')) return PJ.mode!=='foco'&&PJ.pre===id.slice(4);
+  if(id.startsWith('pjf:')) return PJ.mode!=='ecra'&&PJ.foc===id.slice(4);
+  if(id.startsWith('elp:')) return EL.on&&EL.pre===id.slice(4);
   const a={'act:black':emPreto,'act:move':jpAuto,'act:sec':secAuto,'act:beams':$('cBeams').checked,'act:heads':$('cHeads').checked,
     'act:panels':$('pjGlow').checked,'act:cam':$('bc').checked,'act:vista':vista==='sala','pjVideo':$('pjVid').checked};
   return !!a[id]; }
@@ -3337,6 +3809,15 @@ let pvEl=null, pvFn=null, pvRaf=0, pvTimer=0;
 const corPaineis=()=>$('pjCol').value==='fix'?$('pjFix').value:'#e6ecff';
 function pvConteudo(el){
   const tip=el.dataset.tip||'';
+  if(el.dataset.pjpre){ const d=PJ_PRE.find(q=>q[0]===el.dataset.pjpre); if(!d) return null;
+    return {t:'Painéis · ecrã · '+d[1], d:d[2]+(PJ.uni||PP_GLOBAL[d[0]]?' · unido':''), fn:(x,W,H,t)=>pvPP(x,W,H,d[0],t)}; }
+  if(el.dataset.pjfoc){ const d=PJ_FOC.find(q=>q[0]===el.dataset.pjfoc); if(!d) return null;
+    return {t:'Painéis · foco · '+d[1], d:d[2], fn:(x,W,H,t)=>pvFoc(x,W,H,d[0],t)}; }
+  if(el.dataset.elpre){ const d=EL_PRE.find(q=>q[0]===el.dataset.elpre); if(!d) return null;
+    return {t:'Elidy · '+d[1], d:d[2], fn:(x,W,H,t)=>drawElidy(x,W,H,d[0],t*EL.spd,pvKE(t))}; }
+  if(el.dataset.pjm){ const D={foco:'Lâmpadas e feixes fortes apontados a um alvo',ecra:'Animação nas ripas e feixe fraco na cor do que mostram',misto:'Cada grupo (A, B, M) com o seu modo'};
+    const m=el.dataset.pjm; return {t:'Modo '+m.toUpperCase(), d:D[m], fn:m==='foco'?(x,W,H,t)=>pvFoc(x,W,H,PJ.foc,t):(x,W,H,t)=>pvPP(x,W,H,PJ.pre,t)}; }
+  if(el.dataset.pjt) return {t:'Alvo', d:tip, fn:(x,W,H,t)=>{ const s=PJ.tgt; PJ.tgt=el.dataset.pjt; try{ pvFoc(x,W,H,'converge',t); } finally { PJ.tgt=s; } }};
   if(el.dataset.pv&&el.dataset.pv.startsWith('cue:')){ const c=cues[+el.dataset.pv.slice(4)]; if(!c) return null;
     const pat=RECT_PATTERNS.find(p=>p.id===c.pat)||RECT_PATTERNS[0], col=(c.look&&c.look.pjFix)||'#7dff2a';
     const m=c.look&&c.look.mestre!=null?Math.round(c.look.mestre*100)+'%':'—';
@@ -3374,7 +3855,7 @@ function pvShow(el){
 }
 function pvHide(){ clearTimeout(pvTimer); pvEl=null; pvFn=null; cancelAnimationFrame(pvRaf); $('pv').classList.remove('on'); }
 document.addEventListener('pointerover',e=>{
-  const el=e.target.closest&&e.target.closest('[data-pv],[data-rectpat],[data-mhpat],[data-stage],[data-preset],[data-cam],[data-shot],[data-camada],#lvPrev,#lvNext,#panel .eqrow,#panel label,#panel button,#panel select,#bar .dockzone .eqrow,#bar .dockzone label,#bar .dockzone button,#bar .dockzone select,.dHandle');
+  const el=e.target.closest&&e.target.closest('[data-pjpre],[data-pjfoc],[data-elpre],[data-pjm],[data-pjt],[data-pv],[data-rectpat],[data-mhpat],[data-stage],[data-preset],[data-cam],[data-shot],[data-camada],#lvPrev,#lvNext,#panel .eqrow,#panel label,#panel button,#panel select,#bar .dockzone .eqrow,#bar .dockzone label,#bar .dockzone button,#bar .dockzone select,.dHandle');
   if(!el||el===pvEl||document.body.classList.contains('layout-edit')) return;
   clearTimeout(pvTimer); pvTimer=setTimeout(()=>pvShow(el),el.closest('#panel,.dockzone')?320:160); });
 document.addEventListener('pointerout',e=>{ const to=e.relatedTarget;
@@ -3511,8 +3992,8 @@ document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==
    AUTO: o layout é gerado para a largura do ecrã. Ao arrastar um divisor ou mover um
    cartão, passa a CUSTOM e fica guardado (as proporções acompanham o tamanho do ecrã). */
 const BANK_ORIG=[...document.querySelectorAll('#panel details.banco')].map(d=>d.dataset.g);
-const AUTO_PRIO=['som','paineis','heads','ecras','camera','luz','palco','mesa'], COLW=300, GAPC=8;
-const PLATE={status:'.pl-status',cues:'.pl-cues',heads:'.pl-heads',panels:'.pl-panels',faders:'.pl-faders',master:'.pl-master',actions:'.pl-act'};
+const AUTO_PRIO=['som','paineis','elidy','heads','ecras','camera','luz','palco','mesa'], COLW=300, GAPC=8;
+const PLATE={status:'.pl-status',cues:'.pl-cues',heads:'.pl-heads',panels:'.pl-panels',anim:'.pl-anim',faders:'.pl-faders',master:'.pl-master',actions:'.pl-act'};
 const CARDS_FIXOS=Object.keys(PLATE);
 const plateEl={}; CARDS_FIXOS.forEach(k=>plateEl[k]=document.querySelector('#bar '+PLATE[k]));
 let layout={mode:'auto'};
@@ -3559,7 +4040,7 @@ function guardaCustom(){ layout={mode:'custom',cols:lerLayout()}; layoutSave(); 
 // colunas geradas para a largura atual
 function autoCols(){
   const bar=$('bar'), W=bar.clientWidth-18;
-  const cols=[{w:184,cards:[{id:'status',h:1}]},{w:330,cards:[{id:'cues',h:1},{id:'heads',h:.85}]},{w:236,cards:[{id:'panels',h:1}]},
+  const cols=[{w:184,cards:[{id:'status',h:1}]},{w:330,cards:[{id:'cues',h:1},{id:'heads',h:.85}]},{w:236,cards:[{id:'panels',h:1},{id:'anim',h:1.15}]},
     {w:590,cards:[{id:'faders',h:1}]},{w:98,cards:[{id:'master',h:1}]},{w:196,cards:[{id:'actions',h:1}]}];
   const usado=cols.reduce((a,c)=>a+c.w,0)+GAPC*(cols.length-1);
   const n=(vista==='sala'||document.body.classList.contains('con-off'))?0:Math.max(0,Math.floor((W-usado)/(COLW+GAPC)));
@@ -3639,7 +4120,7 @@ document.addEventListener('drop',e=>{ if(!dragId) return; const a=alvoDrop(e); i
     let b=null; for(const x of ds){ const r=x.getBoundingClientRect(); if(e.clientY<r.top+r.height/2){ b=x; break; } } paraDrawer(d,b||null); }
   limpaAlvo(); renderLayout(cols.filter(c=>c.cards.length)); guardaCustom(); }, true);
 /* ---- o estado de luz e cor, num sitio so ---- */
-const LV_CAMPOS=['mestre','exposicao','painel','cruz','ecra','plateia','feixes','halo',
+const LV_CAMPOS=['mestre','exposicao','painel','foco','elidy','cruz','ecra','plateia','feixes','halo',
   'painelLuz','painelHalo','painelLancador','led','cabeca','poeira'];
 function verAtual(){
   const o={};
@@ -3649,6 +4130,7 @@ function verAtual(){
   for(const id of ['expo','pjGlowI','reTone','mhTone','pjTone']) o[id]=$(id).value;
   for(const id of ['pjCol','mhColMode']) o[id]=$(id).value;
   for(const id of ['reCol','mhFix','pjFix']) o[id]=$(id).value;
+  o.pjA=JSON.parse(JSON.stringify(PJ)); o.el=JSON.parse(JSON.stringify(EL));
   return o;
 }
 function aplicar(v){
@@ -3658,7 +4140,9 @@ function aplicar(v){
   for(const id of ['expo','pjGlowI','reTone','mhTone','pjTone']) if(v[id]!==undefined){ const e=$(id); if(e){ e.value=v[id]; e.dispatchEvent(new Event('input',{bubbles:true})); } }
   for(const id of ['pjCol','mhColMode']) if(v[id]!==undefined){ const e=$(id); if(e){ e.value=v[id]; e.dispatchEvent(new Event('change',{bubbles:true})); } }
   for(const id of ['reCol','mhFix','pjFix']) if(v[id]!==undefined){ const e=$(id); if(e){ e.value=v[id]; e.dispatchEvent(new Event('input',{bubbles:true})); } }
-  lvMestre(LV.mestre); renderBright(); expoSync(); applyQuality(); liveRefresh(true);
+  if(v.pjA){ Object.assign(PJ,JSON.parse(JSON.stringify(v.pjA))); pjCols(); }
+  if(v.el){ Object.assign(EL,JSON.parse(JSON.stringify(v.el))); dirty=true; }
+  lvMestre(LV.mestre); renderBright(); expoSync(); applyQuality(); pjSyncUI(); liveRefresh(true);
 }
 
 /* ==================== CUES ====================
@@ -3982,7 +4466,7 @@ function saveNow(){ try{ localStorage.setItem('palco3d_v3',JSON.stringify({thr:A
   q:$('quality').value,bcInt:$('bcInt').value,bcBeat:$('bcBeat').checked,camShot:$('camShot').value,cAuto:$('cAuto').checked,
   cBeams:$('cBeams').checked,cBalls:$('cBalls').checked,cShadow:$('cShadow').checked,cHaze:$('cHaze').checked,
   res:$('res').value,fpsCap:$('fpsCap').value,lock:$('panel').classList.contains('lock'),bw:bLarg,
-  bancos:!!$('bancos'),jpAuto,secAuto,vista,bank,
+  bancos:!!$('bancos'),jpAuto,secAuto,vista,bank,pjA:PJ,el:EL,
   cHeads:$('cHeads').checked,pjGlowOn:$('pjGlow').checked,pjGlowI:$('pjGlowI').value,pjCol:$('pjCol').value,pjVid:$('pjVid').checked,
   pjAll:$('pjAll').checked,pjSrc:/^m:/.test($('pjSrc').value)?'screens':$('pjSrc').value,autoFull:$('autoFull').checked,
   rectPat:rectPattern,mhPat:mhPattern,cueOn,expo:LV.exposicao,
@@ -4085,6 +4569,7 @@ function loop(now){
 }
 requestAnimationFrame(loop);
 setDetect(jpAuto); lvMestre(LV.mestre); liveRefresh(true);
+midiDefsDirty(); renderMidiRows(); renderAkai(); pjSyncUI();
 setSecAuto(secAuto); setVista(vista,true); autoLayout();
 setTimeout(religarAudio,600);
 setTimeout(()=>$('hint').classList.add('fora'),10000);
